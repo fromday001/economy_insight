@@ -1,0 +1,29 @@
+name: Daily Economic Briefing Auto Updater
+on:
+  schedule:
+    # 매일 한국 시간 오전 08:00 (UTC 23:00) 자동 실행
+    - cron: '0 23 * * *'
+  workflow_dispatch: # 웹 화면에서 언제든 수동 즉시 실행 가능
+jobs:
+  update-briefings:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 변경된 JSON 파일 자동 커밋 및 푸시 권한
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+      - name: 파이썬 3.11 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 일일 경제 뉴스 검색 및 AI 요약 스크립트 실행
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python updater.py
+      - name: 최신 브리핑 데이터베이스 자동 커밋 및 푸시
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "EconInsight-Bot"
+          git add data/daily_briefings.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update: $(date +'%Y-%m-%d') 일일 경제 뉴스 브리핑 갱신" && git push)
