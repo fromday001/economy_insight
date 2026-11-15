@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>에코노미 인사이트 (EconInsight) - 경제 공부 & 데일리 마켓 브리핑</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --up-color: #ef4444;    /* 상승: 빨강 */
+      --down-color: #3b82f6;  /* 하락: 파랑 */
+      --card-bg: #ffffff;
+      --body-bg: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --card-bg: #1e293b;
+        --body-bg: #0f172a;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+      }
+    }
+    body {
+      background-color: var(--body-bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .metric-up { color: #ef4444; }
+    .metric-down { color: #3b82f6; }
+    .tab-active {
+      border-bottom: 2px solid #2563eb;
+      color: #2563eb;
+      font-weight: 700;
+    }
+    .active-archive-item {
+      border-color: #2563eb !important;
+      background-color: rgba(37, 99, 235, 0.06) !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- 상단 네비게이션 헤더 -->
+  <header class="sticky top-0 z-50 bg-[var(--card-bg)] border-b border-[var(--border-color)] shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- 로고 -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('briefing')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-xl shadow-md">
+            📈
+          </div>
+          <div>
+            <span class="text-lg font-bold tracking-tight text-[var(--text-main)]">에코노미 인사이트</span>
+            <span class="text-xs block text-[var(--text-muted)] font-medium">EconInsight Learning & Daily Briefing</span>
+          </div>
+        </div>
+
+        <!-- 탭 메뉴 -->
+        <nav class="hidden md:flex space-x-7 text-sm font-medium">
+          <button id="nav-briefing" onclick="switchTab('briefing')" class="py-5 px-1 tab-active transition-colors flex items-center gap-1.5">
+            <span>📰</span> 오늘의 브리핑
+          </button>
+          <button id="nav-archive" onclick="switchTab('archive')" class="py-5 px-1 text-[var(--text-muted)] hover:text-blue-600 transition-colors flex items-center gap-1.5 relative">
+            <span>🗂️</span> 뉴스 요약 아카이브 (게시판)
+            <span class="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full">New</span>
+          </button>
+          <button id="nav-company" onclick="switchTab('company')" class="py-5 px-1 text-[var(--text-muted)] hover:text-blue-600 transition-colors flex items-center gap-1.5">
+            <span>🔍</span> 좋은 기업 선별 실습
+          </button>
+          <button id="nav-macro" onclick="switchTab('macro')" class="py-5 px-1 text-[var(--text-muted)] hover:text-blue-600 transition-colors flex items-center gap-1.5">
+            <span>🎓</span> 경제 상식 & 시뮬레이터
+          </button>
+          <button id="nav-chatbot" onclick="switchTab('chatbot')" class="py-5 px-1 text-[var(--text-muted)] hover:text-blue-600 transition-colors flex items-center gap-1.5">
+            <span>🤖</span> AI 경제 멘토 챗봇
+          </button>
+        </nav>
+
+        <!-- 우측 액션 (챗봇 바로가기 & 오늘 날짜) -->
+        <div class="flex items-center space-x-3">
+          <span class="text-xs bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900" id="current-date-badge">
+            2026.11.15 기준
+          </span>
+          <button onclick="switchTab('chatbot')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1">
+            <span>💬</span> 멘토에게 질문
+          </button>
+        </div>
+      </div>
+
+      <!-- 모바일 탭 바 -->
+      <div class="flex md:hidden overflow-x-auto py-2 space-x-4 text-xs font-semibold border-t border-[var(--border-color)] custom-scroll">
+        <button onclick="switchTab('briefing')" id="m-nav-briefing" class="whitespace-nowrap py-1 px-2 text-blue-600">오늘의 브리핑</button>
+        <button onclick="switchTab('archive')" id="m-nav-archive" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">뉴스 게시판</button>
+        <button onclick="switchTab('company')" id="m-nav-company" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">기업 선별 실습</button>
+        <button onclick="switchTab('macro')" id="m-nav-macro" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">경제 상식</button>
+        <button onclick="switchTab('chatbot')" id="m-nav-chatbot" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">AI 챗봇</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ============================================================ -->
+    <!-- TAB 1: 오늘의 데일리 마켓 브리핑 -->
+    <!-- ============================================================ -->
+    <section id="section-briefing" class="space-y-6">
+      <!-- 주요 지표 실시간 티커 카드 -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <!-- 나스닥 100 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl p-3 shadow-sm hover:border-blue-400 transition">
+          <div class="text-xs text-[var(--text-muted)] font-medium">나스닥 100</div>
+          <div class="text-lg font-bold mt-1">21,480.20</div>
+          <div class="text-xs font-semibold metric-up flex items-center gap-1">
+            ▲ +235.80 (+1.11%)
+          </div>
+          <div class="text-[10px] text-[var(--text-muted)] mt-1">빅테크 AI 실적 주도</div>
+        </div>
+        <!-- S&P 500 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl p-3 shadow-sm hover:border-blue-400 transition">
+          <div class="text-xs text-[var(--text-muted)] font-medium">S&P 500</div>
+          <div class="text-lg font-bold mt-1">6,024.15</div>
+          <div class="text-xs font-semibold metric-up flex items-center gap-1">
+            ▲ +42.30 (+0.71%)
+          </div>
+          <div class="text-[10px] text-[var(--text-muted)] mt-1">신고가 경신 랠리</div>
+        </div>
+        <!-- 코스피 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl p-3 shadow-sm hover:border-blue-400 transition">
+          <div class="text-xs text-[var(--text-muted)] font-medium">코스피 (KOSPI)</div>
+          <div class="text-lg font-bold mt-1">2,610.50</div>
+          <div class="text-xs font-semibold metric-down flex items-center gap-1">
+            ▼ -12.40 (-0.47%)
+          </div>
+          <div class="text-[10px] text-[var(--text-muted)] mt-1">외국인 선물 매도세</div>
+        </div>
+        <!-- 원/달러 환율 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl p-3 shadow-sm hover:border-blue-400 transition">
+          <div class="text-xs text-[var(--text-muted)] font-medium">원/달러 환율</div>
+          <div class="text-lg font-bold mt-1">1,394.50원</div>
+          <div class="text-xs font-semibold metric-up flex items-center gap-1">
+            ▲ +6.50원 (원화 약세)
+          </div>
+          <div class="text-[10px] text-[var(--text-muted)] mt-1">달러 강세 영향</div>
+        </div>
+        <!-- 미국 10년물 국채금리 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl p-3 shadow-sm hover:border-blue-400 transition">
+          <div class="text-xs text-[var(--text-muted)] font-medium">미 국채 10년물</div>
+          <div class="text-lg font-bold mt-1">4.38%</div>
+          <div class="text-xs font-semibold metric-up flex items-center gap-1">
+            ▲ +0.04%p
+          </div>
+          <div class="text-[10px] text-[var(--text-muted)] mt-1">금리 인하 속도 조절론</div>
+        </div>
+        <!-- WTI 국제유가 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-xl p-3 shadow-sm hover:border-blue-400 transition">
+          <div class="text-xs text-[var(--text-muted)] font-medium">WTI 유가</div>
+          <div class="text-lg font-bold mt-1">$68.40</div>
+          <div class="text-xs font-semibold metric-down flex items-center gap-1">
+            ▼ -$1.20 (-1.72%)
+          </div>
+          <div class="text-[10px] text-[var(--text-muted)] mt-1">글로벌 수요 둔화 우려</div>
+        </div>
+      </div>
+
+      <!-- 메인 브리핑 & 시장 인과관계 해설 섹션 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 좌측 2열: 오늘의 경제 해설 & 나스닥/국내주식 대처법 -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- 핵심 스토리텔링 해설 박스 -->
+          <div class="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">🌐</div>
+            <div class="flex items-center gap-2 text-blue-300 text-xs font-semibold mb-2">
+              <span class="bg-blue-800/80 px-2 py-0.5 rounded">오늘의 거시경제 돋보기</span>
+              <span>2026년 11월 15일 브리핑</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight mb-3">
+              "달러 강세 & 국채금리 반등 속, 왜 나스닥은 신고가를 향해 달릴까?"
+            </h2>
+            <p class="text-blue-100 text-sm leading-relaxed mb-4">
+              보통 미 국채금리가 오르고 달러가 강세를 보이면 기술주는 미래 수익 가치가 할인되어 조정을 받는 것이 정석입니다.
+              그러나 오늘 시장은 연준의 금리 인하 속도 둔화 우려를 <strong>빅테크의 견고한 AI 인프라 실적</strong>이 압도하며 나스닥 상승을 견인했습니다. 반면 고환율 부담이 지속된 국내 증시는 외국인 매도세로 상단이 제한되었습니다.
+            </p>
+
+            <!-- 3단계 인과관계 다이어그램 -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 space-y-3">
+              <div class="text-xs font-bold text-yellow-300">⚡ 지표 흐름으로 보는 시장 인과관계</div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-black/20 p-2.5 rounded-lg border border-white/10">
+                  <div class="font-bold text-white mb-1">1. 원인: 견조한 고용 & 지표</div>
+                  <div class="text-blue-200">미 경제지표 호조로 연준의 조기 금리 인하 기대가 줄며 미 국채금리(4.38%) 상승.</div>
+                </div>
+                <div class="bg-black/20 p-2.5 rounded-lg border border-white/10">
+                  <div class="font-bold text-white mb-1">2. 현상: 차별화 장세</div>
+                  <div class="text-blue-200">금리 상승에도 실적을 증명한 초거대 빅테크 독주, 반면 중소형 가치주는 압박.</div>
+                </div>
+                <div class="bg-black/20 p-2.5 rounded-lg border border-white/10">
+                  <div class="font-bold text-white mb-1">3. 국내 영향: 환율 1,390원대</div>
+                  <div class="text-blue-200">원화 약세로 수출 대형주(반도체/자동차)엔 환율 수혜 vs 수입원가 부담 업종 조정.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 투자자 실전 대응 가이드 카드 -->
+          <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm">
+            <h3 class="text-base font-bold text-[var(--text-main)] mb-4 flex items-center gap-2">
+              <span class="text-blue-600">🛡️</span> 초보 투자자를 위한 현재 시장 대처 전략
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+              <div class="p-4 rounded-xl bg-blue-50/50 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700">
+                <div class="font-bold text-blue-700 dark:text-blue-400 mb-1 flex items-center gap-1.5">
+                  <span>🇺🇸</span> 미국 주식 / 나스닥 대응법
+                </div>
+                <ul class="space-y-1.5 text-[var(--text-muted)] list-disc list-inside">
+                  <li><strong>무리한 추격 매수 자제:</strong> 지수 전고점 부근에서는 분할 매수(DCA) 원칙 유지.</li>
+                  <li><strong>잉여현금흐름(FCF) 중심:</strong> 금리가 고공행진할 때는 현금 부자 기업(애플, MS, 알파벳 등)이 방어력 우수.</li>
+                  <li><strong>단기 국채 ETF 활용:</strong> 금리 변동성 구간에서 연 4% 중반의 이자를 취하는 파킹 전략 병행.</li>
+                </ul>
+              </div>
+
+              <div class="p-4 rounded-xl bg-emerald-50/50 dark:bg-slate-800/60 border border-emerald-100 dark:border-slate-700">
+                <div class="font-bold text-emerald-700 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
+                  <span>🇰🇷</span> 한국 주식 / 코스피 대응법
+                </div>
+                <ul class="space-y-1.5 text-[var(--text-muted)] list-disc list-inside">
+                  <li><strong>환율 1,400원 근접 시 외국인 수급 주시:</strong> 환율 안정화 전까지는 대형주 위주 보수적 접근.</li>
+                  <li><strong>실적과 주주환원(밸류업) 종목 압축:</strong> 저PBR 종목 중에서도 실제 자사주 소각과 배당 확대 여력이 있는 기업 선별.</li>
+                  <li><strong>원자재 하락 수혜 업종:</strong> 유가 하락 시 원가 부담이 줄어드는 항공·화학 섹터 반등 시점 점검.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 오늘의 브리핑 뉴스 요약 & 아카이브 게시판 유도 -->
+          <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-bold text-[var(--text-main)] flex items-center gap-2">
+                  <span>📰</span> 오늘의 세계 및 국내 주요 경제 뉴스 요약
+                </h3>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">매일 축적되는 뉴스는 아카이브 게시판에서 날짜별로 다시 볼 수 있습니다.</p>
+              </div>
+              <button onclick="switchTab('archive')" class="text-xs bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-700 font-bold px-3 py-1.5 rounded-lg hover:bg-blue-100 transition">
+                🗂️ 지난 뉴스 아카이브 전체보기 →
+              </button>
+            </div>
+            
+            <div class="space-y-4" id="daily-top-news">
+              <!-- JS에서 최신 뉴스를 동적으로 주입 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측 1열: 시장 상태 진단 & 경제 캘린더 & 학습 팁 -->
+        <div class="space-y-6">
+          <!-- 아카이브 게시판 바로가기 위젯 배너 -->
+          <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 text-white shadow-md cursor-pointer hover:shadow-lg transition" onclick="switchTab('archive')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">누적 데이터베이스</span>
+              <span class="text-lg">🗂️</span>
+            </div>
+            <h4 class="font-bold text-base mt-2">일일 경제 뉴스 아카이브 게시판</h4>
+            <p class="text-xs text-blue-100 mt-1 leading-relaxed">
+              과거 날짜별 경제 헤드라인, 3줄 요약, 당시 시장 지표를 검색하고 복습해 보세요!
+            </p>
+            <div class="mt-3 flex items-center text-xs font-bold text-yellow-300 gap-1">
+              <span>게시판 바로가기</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <!-- 시장 심리 게이지 (Fear & Greed) -->
+          <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-5 shadow-sm">
+            <h4 class="text-sm font-bold text-[var(--text-main)] mb-3 flex items-center justify-between">
+              <span>시장 심리 지수 (공포/탐욕)</span>
+              <span class="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded font-bold">중립-탐욕 (62점)</span>
+            </h4>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-3 rounded-full overflow-hidden relative">
+              <div class="bg-gradient-to-r from-blue-500 via-amber-400 to-red-500 h-full w-[62%] rounded-full"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-[var(--text-muted)] mt-1.5">
+              <span>극단적 공포(0)</span>
+              <span>중립(50)</span>
+              <span>극단적 탐욕(100)</span>
+            </div>
+            <p class="text-xs text-[var(--text-muted)] mt-3 leading-relaxed">
+              워런 버핏: <em>"남들이 탐욕스러울 때 두려워하고, 남들이 두려워할 때 탐욕을 가져라."</em> 현재는 섣부른 몰빵보다는 현금 비중 20~30% 유지가 유리한 구간입니다.
+            </p>
+          </div>
+
+          <!-- 이번 주 핵심 경제 캘린더 -->
+          <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-5 shadow-sm">
+            <h4 class="text-sm font-bold text-[var(--text-main)] mb-3 flex items-center gap-1.5">
+              <span>📅</span> 이번 주 놓치면 안 될 경제 일정
+            </h4>
+            <div class="space-y-2.5 text-xs">
+              <div class="flex items-start gap-2 pb-2 border-b border-[var(--border-color)]">
+                <span class="font-bold text-blue-600 whitespace-nowrap">11.18(화)</span>
+                <div>
+                  <div class="font-semibold text-[var(--text-main)]">미국 소매판매 지표 (Retail Sales)</div>
+                  <div class="text-[var(--text-muted)] text-[11px]">미국 소비의 실질 체력 확인 (소비 위축 여부)</div>
+                </div>
+              </div>
+              <div class="flex items-start gap-2 pb-2 border-b border-[var(--border-color)]">
+                <span class="font-bold text-blue-600 whitespace-nowrap">11.20(목)</span>
+                <div>
+                  <div class="font-semibold text-[var(--text-main)]">엔비디아(NVIDIA) 분기 실적 발표</div>
+                  <div class="text-[var(--text-muted)] text-[11px]">글로벌 AI 밸류체인과 나스닥의 향방을 가를 최대 이벤트</div>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-bold text-blue-600 whitespace-nowrap">11.21(금)</span>
+                <div>
+                  <div class="font-semibold text-[var(--text-main)]">한국은행 금융통화위원회</div>
+                  <div class="text-[var(--text-muted)] text-[11px]">국내 기준금리 결정 및 가계부채/환율 평가</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 2: 데일리 뉴스 아카이브 (게시판 형태 - 누적 보관실) -->
+    <!-- ============================================================ -->
+    <section id="section-archive" class="space-y-6 hidden">
+      <!-- 게시판 상단 헤더 및 검색/필터 바 -->
+      <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-[var(--border-color)]">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900">
+                누적 경제 지식 아카이브
+              </span>
+              <span class="text-xs text-[var(--text-muted)]" id="archive-count-badge">총 6건의 브리핑 보관 중</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold mt-1 text-[var(--text-main)]">
+              🗂️ 세계 및 국내 주요 경제 뉴스 요약 게시판
+            </h2>
+            <p class="text-xs text-[var(--text-muted)] mt-1">
+              매일 검색·정리된 세계 경제 흐름과 시장 지표 요약을 일자별로 누적하여 차후에도 학습할 수 있는 게시판입니다.
+            </p>
+          </div>
+
+          <!-- 새 브리핑 직접 작성 버튼 -->
+          <div class="flex items-center gap-2">
+            <button onclick="openNewPostModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center gap-1.5 whitespace-nowrap">
+              <span>✍️</span> 새 브리핑 등록
+            </button>
+            <button onclick="resetDefaultArchive()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-[var(--text-muted)] text-xs px-3 py-2.5 rounded-xl border border-[var(--border-color)] transition" title="기본 샘플 데이터로 복원">
+              ↺ 초기화
+            </button>
+          </div>
+        </div>
+
+        <!-- 필터 및 검색 컨트롤 -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <!-- 카테고리 칩 -->
+          <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto" id="category-filter-buttons">
+            <button onclick="filterArchive('all')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold" data-cat="all">전체보기</button>
+            <button onclick="filterArchive('fed')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)] hover:bg-slate-200" data-cat="fed">미국 연준/금리</button>
+            <button onclick="filterArchive('fx')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)] hover:bg-slate-200" data-cat="fx">국내 외환/환율</button>
+            <button onclick="filterArchive('tech')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)] hover:bg-slate-200" data-cat="tech">반도체/빅테크</button>
+            <button onclick="filterArchive('oil')" class="cat-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)] hover:bg-slate-200" data-cat="oil">원자재/유가</button>
+          </div>
+
+          <!-- 검색창 -->
+          <div class="w-full sm:w-72 relative">
+            <input type="text" id="archive-search-input" placeholder="키워드 검색 (예: 금리, 환율, 엔비디아)..." onkeyup="handleArchiveSearch()" class="w-full bg-[var(--body-bg)] border border-[var(--border-color)] rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-blue-500 text-[var(--text-main)]">
+            <span class="absolute left-3 top-2.5 text-[var(--text-muted)]">🔍</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 게시판 분할 화면: 좌측 리스트(4) vs 우측 상세 뷰(8) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 좌측: 게시글 목록 (5열) -->
+        <div class="lg:col-span-5 space-y-3" id="archive-list-container">
+          <!-- 동적으로 렌더링 -->
+        </div>
+
+        <!-- 우측: 선택된 게시글 상세 리포트 뷰 (7열) -->
+        <div class="lg:col-span-7 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm sticky top-24 space-y-5" id="archive-detail-container">
+          <!-- 선택된 상세 글 렌더링 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 3: 좋은 기업 선별 실습실 (Screener & Analysis) -->
+    <!-- ============================================================ -->
+    <section id="section-company" class="space-y-6 hidden">
+      <!-- 상단 헤더 배너 -->
+      <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm">
+        <div class="max-w-3xl">
+          <span class="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900">
+            실전 투자 역량 강화
+          </span>
+          <h2 class="text-xl sm:text-2xl font-bold mt-2 text-[var(--text-main)]">
+            좋은 기업을 선별하는 4가지 렌즈 (실습 시뮬레이터)
+          </h2>
+          <p class="text-sm text-[var(--text-muted)] mt-1.5 leading-relaxed">
+            주가는 단기적으로 투표기이지만, 장기적으로는 <strong>기업의 실적을 재는 계량기</strong>입니다.
+            실제 종목을 선택하거나 지표를 직접 조절하면서 해당 기업이 매력적인지 즉시 분석해 보세요.
+          </p>
+        </div>
+
+        <!-- 프리셋 종목 선택 버튼 -->
+        <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-[var(--border-color)] text-xs">
+          <span class="font-bold text-[var(--text-muted)]">샘플 기업 선택:</span>
+          <button onclick="loadCompanyPreset('samsung')" class="px-3 py-1.5 rounded-lg border border-blue-200 dark:border-slate-700 bg-blue-50 dark:bg-slate-800 font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100">
+            🇰🇷 삼성전자 (반도체/하드웨어)
+          </button>
+          <button onclick="loadCompanyPreset('apple')" class="px-3 py-1.5 rounded-lg border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold">
+            🇺🇸 애플 (생태계/현금창출)
+          </button>
+          <button onclick="loadCompanyPreset('nvidia')" class="px-3 py-1.5 rounded-lg border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold">
+            🇺🇸 엔비디아 (초고성장 AI)
+          </button>
+          <button onclick="loadCompanyPreset('value_trap')" class="px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-950 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-semibold">
+            ⚠️ 위험 기업 예시 (밸류 트랩)
+          </button>
+        </div>
+      </div>
+
+      <!-- 실습 인터페이스 그리드 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 좌측: 지표 컨트롤러 (5열) -->
+        <div class="lg:col-span-5 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-5 shadow-sm space-y-4">
+          <h3 class="font-bold text-sm text-[var(--text-main)] flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+            <span id="current-company-name">삼성전자 (005930) 지표</span>
+            <span class="text-xs text-[var(--text-muted)] font-normal">슬라이더를 움직여보세요</span>
+          </h3>
+
+          <!-- 지표 1: ROE (수익성) -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="font-semibold flex items-center gap-1">
+                <span>1. ROE (자기자본이익률)</span>
+                <span class="text-[var(--text-muted)] cursor-pointer" title="내 돈으로 얼만큼의 이익을 남기는가?">ℹ️</span>
+              </span>
+              <span id="label-roe" class="font-bold text-blue-600">12.5%</span>
+            </div>
+            <input type="range" id="input-roe" min="-10" max="60" value="12.5" step="0.5" class="w-full accent-blue-600" oninput="calculateCompanyScore()">
+            <div class="flex justify-between text-[10px] text-[var(--text-muted)]">
+              <span>적자 (-10%)</span>
+              <span>우수 기준 (15% 이상)</span>
+              <span>초우량 (50%+)</span>
+            </div>
+          </div>
+
+          <!-- 지표 2: PER (밸류에이션 / 적정가) -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="font-semibold flex items-center gap-1">
+                <span>2. PER (주가수익비율)</span>
+                <span class="text-[var(--text-muted)] cursor-pointer" title="이익 대비 주가가 몇 배로 평가받는가?">ℹ️</span>
+              </span>
+              <span id="label-per" class="font-bold text-indigo-600">11.8배</span>
+            </div>
+            <input type="range" id="input-per" min="2" max="100" value="11.8" step="0.5" class="w-full accent-indigo-600" oninput="calculateCompanyScore()">
+            <div class="flex justify-between text-[10px] text-[var(--text-muted)]">
+              <span>저평가/가치주 (10배 이하)</span>
+              <span>시장평균 (15~20배)</span>
+              <span>고평가/성장주 (50배+)</span>
+            </div>
+          </div>
+
+          <!-- 지표 3: 부채비율 (재무안전성) -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="font-semibold flex items-center gap-1">
+                <span>3. 부채비율 (Debt to Equity)</span>
+                <span class="text-[var(--text-muted)] cursor-pointer" title="자기 자본 대비 빚이 얼마나 많은가?">ℹ️</span>
+              </span>
+              <span id="label-debt" class="font-bold text-emerald-600">26.0%</span>
+            </div>
+            <input type="range" id="input-debt" min="5" max="300" value="26.0" step="1" class="w-full accent-emerald-600" oninput="calculateCompanyScore()">
+            <div class="flex justify-between text-[10px] text-[var(--text-muted)]">
+              <span>무차입 수준 (50% 이하)</span>
+              <span>안전 기준 (100% 이하)</span>
+              <span>위험 (200% 초과)</span>
+            </div>
+          </div>
+
+          <!-- 지표 4: 영업이익 성장률 (성장성) -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="font-semibold flex items-center gap-1">
+                <span>4. 영업이익 성장률 (YoY)</span>
+                <span class="text-[var(--text-muted)] cursor-pointer" title="작년보다 비즈니스가 얼마나 성장했는가?">ℹ️</span>
+              </span>
+              <span id="label-growth" class="font-bold text-amber-600">+15.0%</span>
+            </div>
+            <input type="range" id="input-growth" min="-30" max="100" value="15" step="1" class="w-full accent-amber-600" oninput="calculateCompanyScore()">
+            <div class="flex justify-between text-[10px] text-[var(--text-muted)]">
+              <span>역성장 (-30%)</span>
+              <span>안정 성장 (10%)</span>
+              <span>폭발적 성장 (50%+)</span>
+            </div>
+          </div>
+
+          <!-- 지표 5: 경제적 해자(Moat) 등급 -->
+          <div class="space-y-1.5 pt-2 border-t border-[var(--border-color)]">
+            <label class="block text-xs font-semibold text-[var(--text-main)]">
+              5. 경제적 해자 (경쟁 우위 & 진입 장벽)
+            </label>
+            <select id="select-moat" class="w-full text-xs p-2 rounded-lg border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]" onchange="calculateCompanyScore()">
+              <option value="wide">넓은 해자 (독점 기술, 강력한 브랜드, 높은 전환비용)</option>
+              <option value="narrow" selected>좁은 해자 (일정 점유율 보유하나 치열한 경쟁 존재)</option>
+              <option value="none">해자 없음 (누구나 진입 가능, 치열한 가격 치킨게임)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 우측: 분석 결과 종합 대시보드 (7열) -->
+        <div class="lg:col-span-7 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm space-y-5">
+          <!-- 점수 및 종합 판정 배너 -->
+          <div class="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-[var(--border-color)] gap-4">
+            <div>
+              <span class="text-xs text-[var(--text-muted)] font-medium">기업 투자 매력도 종합 진단</span>
+              <div class="text-2xl font-black mt-0.5" id="analysis-grade-badge">
+                <span class="text-emerald-600">A 등급 (우량 가치주)</span>
+              </div>
+              <p class="text-xs text-[var(--text-muted)] mt-1" id="analysis-one-liner">
+                재무 안전성이 탄탄하며 안정적인 현금 창출력을 보유하고 있습니다.
+              </p>
+            </div>
+            <div class="text-center sm:text-right">
+              <div class="text-3xl font-extrabold text-blue-600" id="analysis-total-score">84<span class="text-sm text-[var(--text-muted)] font-normal"> / 100점</span></div>
+              <div class="text-[11px] text-[var(--text-muted)]">초보자 투자 적합도</div>
+            </div>
+          </div>
+
+          <!-- 4대 영역별 신호등 상세 진단 -->
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="p-3 rounded-lg border border-[var(--border-color)] bg-[var(--body-bg)]">
+              <div class="font-bold flex items-center justify-between mb-1">
+                <span>💰 수익성 (ROE)</span>
+                <span id="status-roe" class="text-emerald-600 font-extrabold">● 양호</span>
+              </div>
+              <p class="text-[11px] text-[var(--text-muted)]" id="desc-roe">자기자본 대비 이익률이 12% 이상으로 기본 체력이 좋습니다.</p>
+            </div>
+
+            <div class="p-3 rounded-lg border border-[var(--border-color)] bg-[var(--body-bg)]">
+              <div class="font-bold flex items-center justify-between mb-1">
+                <span>🏷️ 가치평가 (PER)</span>
+                <span id="status-per" class="text-blue-600 font-extrabold">● 적정</span>
+              </div>
+              <p class="text-[11px] text-[var(--text-muted)]" id="desc-per">현재 주가는 이익 수준 대비 무리하지 않은 가격대입니다.</p>
+            </div>
+
+            <div class="p-3 rounded-lg border border-[var(--border-color)] bg-[var(--body-bg)]">
+              <div class="font-bold flex items-center justify-between mb-1">
+                <span>🛡️ 재무안전성 (부채)</span>
+                <span id="status-debt" class="text-emerald-600 font-extrabold">● 매우 안전</span>
+              </div>
+              <p class="text-[11px] text-[var(--text-muted)]" id="desc-debt">부채비율이 매우 낮아 고금리나 불황에도 파산 위험이 없습니다.</p>
+            </div>
+
+            <div class="p-3 rounded-lg border border-[var(--border-color)] bg-[var(--body-bg)]">
+              <div class="font-bold flex items-center justify-between mb-1">
+                <span>🚀 성장성 & 해자</span>
+                <span id="status-growth" class="text-amber-600 font-extrabold">● 보통</span>
+              </div>
+              <p class="text-[11px] text-[var(--text-muted)]" id="desc-growth">완만한 성장을 유지 중이며 경쟁사 대비 진입장벽 강화가 필요합니다.</p>
+            </div>
+          </div>
+
+          <!-- 실제로 데이터 찾아보는 법 가이드 -->
+          <div class="p-4 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 text-xs space-y-2">
+            <div class="font-bold text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
+              <span>📖</span> 실전에서 이 숫자들을 어디서 찾아볼 수 있나요?
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[var(--text-muted)]">
+              <div>
+                <strong class="text-[var(--text-main)]">• 한국 기업 (DART 전자공시 & 네이버페이 증권):</strong>
+                <p>네이버 증권에 종목명 검색 ➡️ [종목분석] ➡️ [재무분석] 탭에서 ROE, 부채비율, PER의 3개년 추이를 1초 만에 확인 가능합니다.</p>
+              </div>
+              <div>
+                <strong class="text-[var(--text-main)]">• 미국 기업 (Yahoo Finance & SEC Edgar):</strong>
+                <p>Yahoo Finance 검색 ➡️ [Financials] 및 [Statistics] 탭에서 Trailing P/E, Return on Equity, Debt/Equity 확인 가능합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 4: 경제 상식 & 상관관계 시뮬레이터 (Macro Simulator) -->
+    <!-- ============================================================ -->
+    <section id="section-macro" class="space-y-6 hidden">
+      <!-- 시뮬레이터 소개 -->
+      <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+          거시경제 연결고리 시뮬레이터 (Macro Linkage Simulator)
+        </h2>
+        <p class="text-sm text-[var(--text-muted)] mt-1.5 leading-relaxed">
+          경제는 모든 톱니바퀴가 연결되어 있습니다. <strong>금리, 환율, 유가, 물가</strong>를 조작했을 때
+          주식시장, 채권, 부동산, 기업 실적이 어떻게 연쇄 반응하는지 직접 확인해 보세요.
+        </p>
+
+        <!-- 핵심 트리거 선택 버튼 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+          <button onclick="setMacroSimulation('rate_up')" id="btn-rate-up" class="p-3 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-bold text-xs text-left">
+            🔥 1. 기준금리 인상 시
+          </button>
+          <button onclick="setMacroSimulation('rate_down')" id="btn-rate-down" class="p-3 rounded-xl border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-left">
+            💧 2. 기준금리 인하 시
+          </button>
+          <button onclick="setMacroSimulation('fx_up')" id="btn-fx-up" class="p-3 rounded-xl border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-left">
+            💵 3. 원/달러 환율 급등 시
+          </button>
+          <button onclick="setMacroSimulation('oil_up')" id="btn-oil-up" class="p-3 rounded-xl border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-left">
+            🛢️ 4. 국제유가 급등 시
+          </button>
+        </div>
+      </div>
+
+      <!-- 연쇄 반응 다이어그램 카드 -->
+      <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+          <h3 class="font-bold text-base text-[var(--text-main)]" id="sim-title">
+            기준금리를 인상했을 때 일어나는 5단계 도미노
+          </h3>
+          <span class="text-xs bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-md font-bold" id="sim-badge">
+            긴축 정책 (Tightening)
+          </span>
+        </div>
+
+        <!-- 5단계 카드 레이아웃 -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3" id="sim-cards-container">
+          <!-- 동적 주입 -->
+        </div>
+      </div>
+
+      <!-- 필수 경제 용어 카드 목록 -->
+      <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm">
+        <h3 class="font-bold text-base text-[var(--text-main)] mb-4 flex items-center gap-2">
+          <span>📚</span> 주식·경제 공부를 위해 반드시 알아야 할 4대 핵심 개념
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] space-y-1.5">
+            <div class="font-bold text-blue-600">1. 연준(Fed)과 FOMC</div>
+            <p class="text-[var(--text-muted)] leading-relaxed">
+              세계 경제의 대통령이라 불리는 미국의 중앙은행(연준)이 1년에 8번 모여 기준금리를 결정하는 회의가 FOMC입니다. 전 세계 모든 자산 가격의 시작점이 바로 여기서 결정됩니다.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] space-y-1.5">
+            <div class="font-bold text-indigo-600">2. 인플레이션과 CPI (소비자물가지수)</div>
+            <p class="text-[var(--text-muted)] leading-relaxed">
+              돈의 가치가 떨어져 물건 가격이 오르는 현상입니다. CPI가 예상보다 높게 나오면 "연준이 금리를 더 올리겠구나"하며 나스닥과 증시가 긴장하게 됩니다.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] space-y-1.5">
+            <div class="font-bold text-emerald-600">3. 재무제표 3총사 (상태표, 손익서, 현금흐름표)</div>
+            <p class="text-[var(--text-muted)] leading-relaxed">
+              <strong>재무상태표:</strong> 지금 가진 재산과 빚의 사진<br>
+              <strong>손익계산서:</strong> 1년 동안 얼마나 벌었는지 보여주는 성적표<br>
+              <strong>현금흐름표:</strong> 장부상 이익이 아니라 진짜 통장에 입금된 현금 추적기
+            </p>
+          </div>
+          <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] space-y-1.5">
+            <div class="font-bold text-amber-600">4. 경제적 해자 (Economic Moat)</div>
+            <p class="text-[var(--text-muted)] leading-relaxed">
+              중세 성 주변에 파놓은 도랑(해자)처럼, 경쟁사가 침범하지 못하게 막아주는 강력한 독점력입니다. 코카콜라의 브랜드, 애플의 iOS 생태계, TSMC의 독점 파운드리 기술이 대표적입니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 5: AI 경제 멘토 챗봇 -->
+    <!-- ============================================================ -->
+    <section id="section-chatbot" class="space-y-4 hidden">
+      <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-5 shadow-sm flex flex-col h-[650px]">
+        <!-- 챗봇 상단 헤더 -->
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg font-bold shadow">
+              🤖
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-[var(--text-main)]">AI 경제 멘토 에코 (Econ Mentor)</h3>
+              <p class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 실시간 답변 대기 중 · 초보자 눈높이 모드
+              </p>
+            </div>
+          </div>
+          <button onclick="clearChat()" class="text-xs text-[var(--text-muted)] hover:text-red-500 transition">
+            대화 초기화 ↺
+          </button>
+        </div>
+
+        <!-- 추천 질문 태그 칩 -->
+        <div class="py-2.5 flex items-center gap-1.5 overflow-x-auto text-xs border-b border-[var(--border-color)] custom-scroll">
+          <span class="text-[var(--text-muted)] text-[11px] whitespace-nowrap font-medium">추천 질문:</span>
+          <button onclick="sendQuickPrompt('금리가 오르면 왜 나스닥 기술주가 먼저 떨어지나요?')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-slate-700 hover:bg-blue-100">
+            💡 금리 상승과 나스닥 관계
+          </button>
+          <button onclick="sendQuickPrompt('PER과 PBR의 차이점을 알기 쉽게 설명해줘')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[var(--text-main)] border border-[var(--border-color)] hover:bg-slate-200">
+            📊 PER과 PBR 차이
+          </button>
+          <button onclick="sendQuickPrompt('좋은 배당주를 고를 때 꼭 봐야 할 3가지는?')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[var(--text-main)] border border-[var(--border-color)] hover:bg-slate-200">
+            💰 배당주 선별 기준
+          </button>
+          <button onclick="sendQuickPrompt('환율이 1400원을 넘어가면 우리나라 주식시장에 왜 위험한가요?')" class="whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[var(--text-main)] border border-[var(--border-color)] hover:bg-slate-200">
+            💵 고환율과 코스피 영향
+          </button>
+        </div>
+
+        <!-- 채팅 메시지 영역 -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto py-4 space-y-4 pr-1 text-xs sm:text-sm custom-scroll">
+          <div class="flex items-start gap-2.5 max-w-[85%]">
+            <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0">
+              🤖
+            </div>
+            <div class="bg-blue-50/70 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-2xl rounded-tl-none p-3.5 leading-relaxed text-[var(--text-main)]">
+              안녕하세요! 경제 공부와 주식 투자의 길잡이 <strong>AI 경제 멘토 에코</strong>입니다. 😊<br><br>
+              매일 쏟아지는 경제 뉴스에서 헷갈리는 용어가 있거나, 거시경제 지표(금리, 환율, 나스닥)의 상관관계, 또는 좋은 기업을 고르는 재무제표 분석법이 궁금하다면 언제든 물어보세요!
+            </div>
+          </div>
+        </div>
+
+        <!-- 메시지 입력창 -->
+        <div class="pt-3 border-t border-[var(--border-color)]">
+          <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
+            <input type="text" id="chat-input" placeholder="궁금한 경제 질문을 입력해보세요 (예: '부채비율이 왜 중요한가요?')" class="flex-1 bg-[var(--body-bg)] border border-[var(--border-color)] rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-blue-500 text-[var(--text-main)]">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm shadow transition flex items-center gap-1">
+              <span>전송</span>
+              <span>➤</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 새 브리핑 등록 모달 (게시판 글쓰기) -->
+  <div id="new-post-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+        <h3 class="font-bold text-base text-[var(--text-main)]">✍️ 새 데일리 경제 브리핑 등록</h3>
+        <button onclick="closeNewPostModal()" class="text-lg text-[var(--text-muted)] hover:text-black dark:hover:text-white">✕</button>
+      </div>
+
+      <form onsubmit="handleNewPostSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1 text-[var(--text-main)]">날짜</label>
+          <input type="date" id="modal-date" required class="w-full p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1 text-[var(--text-main)]">카테고리</label>
+            <select id="modal-cat" class="w-full p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]">
+              <option value="fed">미국 연준 / 금리</option>
+              <option value="fx">국내 외환 / 환율</option>
+              <option value="tech">반도체 & 빅테크</option>
+              <option value="oil">원자재 & 유가</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-[var(--text-main)]">출처 / 신문사</label>
+            <input type="text" id="modal-source" placeholder="예: 한국경제, 블룸버그" required class="w-full p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1 text-[var(--text-main)]">뉴스 헤드라인 제목</label>
+          <input type="text" id="modal-title" placeholder="핵심 뉴스 제목을 입력하세요" required class="w-full p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]">
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1 text-[var(--text-main)]">3줄 요약 내용 (엔터로 줄바꿈)</label>
+          <textarea id="modal-bullets" rows="3" placeholder="• 핵심 요약 1&#10;• 핵심 요약 2&#10;• 핵심 요약 3" required class="w-full p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1 text-blue-600">💡 초보자를 위한 공부 포인트 & 시장 대처법</label>
+          <input type="text" id="modal-takeaway" placeholder="예: 금리가 오를 땐 현금 흐름이 탄탄한 기업이 안전합니다." required class="w-full p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--body-bg)] text-[var(--text-main)]">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeNewPostModal()" class="px-4 py-2 rounded-xl border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800">취소</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow">등록하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 하단 푸터 -->
+  <footer class="bg-[var(--card-bg)] border-t border-[var(--border-color)] py-6 mt-12 text-center text-xs text-[var(--text-muted)]">
+    <div class="max-w-7xl mx-auto px-4 space-y-1.5">
+      <p class="font-medium">에코노미 인사이트 (EconInsight) · 경제 학습자를 위한 올인원 지표 & 멘토링 아카이브</p>
+      <p class="text-[11px]">※ 본 서비스의 데이터와 분석 내용은 학습 및 참고용이며, 특정 종목에 대한 투자 권유나 추천이 아닙니다.</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================ -->
+  <!-- 클라이언트 인터랙션 자바스크립트 로직 -->
+  <!-- ============================================================ -->
+  <script>
+    // ==========================================
+    // 1. 기본 아카이브 뉴스 데이터 (초기 샘플 데이터)
+    // ==========================================
+    const defaultArchiveData = [
+      {
+        id: "post-20261115-1",
+        date: "2026-11-15",
+        time: "10:30",
+        category: "fed",
+        categoryName: "미국 연준 / 금리",
+        source: "블룸버그",
+        title: "파월 연준 의장 '경제 강하다… 금리 인하 서두를 필요 없어'",
+        bullets: [
+          "미국 노동시장과 실질 소비가 여전히 견고하여 인플레이션 2% 복귀 속도를 지켜보며 신중히 인하할 방침 시사.",
+          "12월 0.25%p 추가 금리 인하 확률이 시장에서 80%에서 58%로 낮아지며 미 국채 10년물 금리가 4.38%로 반등.",
+          "연준의 속도 조절 발언에 다우 지수는 숨고르기, 반면 빅테크는 자체 실적 호조로 선방."
+        ],
+        takeaway: "‘금리 인하 지연’은 단기 유동성에는 부담이지만, 그만큼 ‘미국 경제 체력이 탄탄하다’는 양날의 검입니다. 빚이 많은 적자 성장주보다는 잉여현금이 풍부한 우량주 중심 압축 전략이 유효합니다.",
+        marketSnapshot: { nasdaq: "+1.11%", kospi: "-0.47%", fx: "1,394.50원", us10y: "4.38%" }
+      },
+      {
+        id: "post-20261115-2",
+        date: "2026-11-15",
+        time: "09:15",
+        category: "fx",
+        categoryName: "국내 외환 / 환율",
+        source: "한국경제",
+        title: "원·달러 환율 1,390원대 안착… 외환당국 구두개입 경계감 확산",
+        bullets: [
+          "글로벌 달러화 강세 랠리와 트럼프 2기 관세 우려로 원화 및 아시아 통화 전반이 약세 기록.",
+          "외환당국이 '시장 쏠림 현상에 대해 엄중 대응하겠다'는 메시지를 내놓으며 1,400원선 심리적 저지선 사수.",
+          "환율 상승으로 외국인 투자자들은 유가증권시장에서 3,200억 원 순매도 기록."
+        ],
+        takeaway: "환율이 급등하면 해외에서 달러로 대금을 받는 수출 기업(자동차, 반도체)은 원화 환산 이익이 늘어나지만, 국내 주식을 쥐고 있는 외국인에게는 환차손이 발생해 지수 상단을 누르게 됩니다.",
+        marketSnapshot: { nasdaq: "+1.11%", kospi: "-0.47%", fx: "1,394.50원", us10y: "4.38%" }
+      },
+      {
+        id: "post-20261115-3",
+        date: "2026-11-15",
+        time: "08:00",
+        category: "tech",
+        categoryName: "반도체 & 빅테크",
+        source: "로이터",
+        title: "글로벌 AI 데이터센터 투자 가속… 차세대 HBM 및 고용량 SSD 수요 급증",
+        bullets: [
+          "마이크로소프트, 구글, 아마존 등 빅테크 3사의 연간 설비투자(CapEx) 합계가 2,000억 달러를 넘어설 전망.",
+          "차세대 AI 가속기와 초고속 HBM4 납품 경쟁이 가열되며 기술 격차에 따른 주가 차별화 심화.",
+          "국내 반도체 밸류체인 소부장(소재·부품·장비) 기업들의 수주 잔고도 덩달아 증가세."
+        ],
+        takeaway: "거시경제 금리 지표가 출렁이더라도, '기업들의 자본 지출(CapEx)이 실질적으로 쏟아지는 산업'은 경기 침체 우려를 뚫고 초과 수익률을 창출합니다.",
+        marketSnapshot: { nasdaq: "+1.11%", kospi: "-0.47%", fx: "1,394.50원", us10y: "4.38%" }
+      },
+      {
+        id: "post-20261114-1",
+        date: "2026-11-14",
+        time: "18:20",
+        category: "fed",
+        categoryName: "미국 연준 / 금리",
+        source: "월스트리트저널",
+        title: "미국 10월 생산자물가지수(PPI) 전년비 2.4% 상승… 예상 부합",
+        bullets: [
+          "전월(1.9%) 대비 반등했으나 시장 예상치에 부합하며 인플레이션 재점화 공포는 일정 부분 진정.",
+          "서비스 물가는 소폭 상승했으나 상품 물가 하락세가 유지되며 연준의 점진적 완화 기조를 지지.",
+          "뉴욕 증시는 관망세 속 혼조 마감하며 기술주 중심의 선별적 매수세 유입."
+        ],
+        takeaway: "CPI(소비자물가)가 소비자가 체감하는 가격이라면, PPI(생산자물가)는 기업들의 원가입니다. PPI는 통상 1~2개월 뒤 CPI의 선행지표 역할을 하므로 함께 모니터링해야 합니다.",
+        marketSnapshot: { nasdaq: "+0.15%", kospi: "+0.32%", fx: "1,388.00원", us10y: "4.34%" }
+      },
+      {
+        id: "post-20261113-1",
+        date: "2026-11-13",
+        time: "15:40",
+        category: "oil",
+        categoryName: "원자재 & 유가",
+        source: "파이낸셜타임스",
+        title: "IEA '내년 글로벌 원유 공급 과잉 전망'… WTI 68달러 선으로 후퇴",
+        bullets: [
+          "국제에너지기구(IEA)가 비OPEC 국가(미국, 가이아나 등)의 증산으로 내년 하루 100만 배럴 이상의 공급 과잉을 경고.",
+          "중국의 제조업 수요 회복 지연과 맞물려 국제유가(WTI)는 배럴당 68달러대로 하락 압력.",
+          "항공 및 해운 섹터는 연료비 절감 기대로 반사이익 반등 시도."
+        ],
+        takeaway: "유가 하락은 에너지 기업에는 악재이지만, 항공/화학/운송 등 제조업 전반에는 '원가 절감 호재'로 작용합니다. 산업별로 지표의 유불리가 정반대임을 이해하는 것이 핵심입니다.",
+        marketSnapshot: { nasdaq: "-0.25%", kospi: "-0.10%", fx: "1,386.50원", us10y: "4.31%" }
+      },
+      {
+        id: "post-20261112-1",
+        date: "2026-11-12",
+        time: "11:10",
+        category: "tech",
+        categoryName: "반도체 & 빅테크",
+        source: "매일경제",
+        title: "정부, 'K-반도체 메가 클러스터' 전력·용수 공급 종합대책 발표",
+        bullets: [
+          "용인 반도체 클러스터 가동에 필요한 대규모 송전망 및 전력 인프라 국비 지원 대책 확정.",
+          "글로벌 파운드리 및 팹리스 유치를 위한 파격적 세제 혜택과 R&D 투자 보조금 확대 추진.",
+          "관련 전력기기(변압기, 전선) 및 클린룸 건설 수혜주로 기관 매수세 집중."
+        ],
+        takeaway: "AI 반도체 붐의 숨겨진 최대 수혜자는 '전력과 전선'입니다. 전력 소모량이 막대한 AI 데이터센터로 인해 변압기와 송전망 기업이 구조적 슈퍼 사이클을 맞이했습니다.",
+        marketSnapshot: { nasdaq: "+0.45%", kospi: "+0.80%", fx: "1,382.00원", us10y: "4.28%" }
+      }
+    ];
+
+    // 로컬 스토리지 키
+    const STORAGE_KEY = "econ_insight_archive_posts_v1";
+
+    function getArchivePosts() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch(e) {
+          console.error(e);
+        }
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultArchiveData));
+      return defaultArchiveData;
+    }
+
+    function saveArchivePosts(posts) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    }
+
+    function resetDefaultArchive() {
+      if (confirm("게시판 데이터를 초기 샘플 데이터로 복원하시겠습니까?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        currentCategory = 'all';
+        searchKeyword = '';
+        document.getElementById('archive-search-input').value = '';
+        renderArchive();
+      }
+    }
+
+    // 전역 상태
+    let currentCategory = 'all';
+    let searchKeyword = '';
+    let selectedPostId = null;
+
+    // ==========================================
+    // 2. 탭 전환 기능
+    // ==========================================
+    function switchTab(tabId) {
+      const sections = ['briefing', 'archive', 'company', 'macro', 'chatbot'];
+      sections.forEach(id => {
+        const sec = document.getElementById(`section-${id}`);
+        const nav = document.getElementById(`nav-${id}`);
+        const mNav = document.getElementById(`m-nav-${id}`);
+        
+        if (id === tabId) {
+          sec.classList.remove('hidden');
+          if (nav) {
+            nav.classList.add('tab-active');
+            nav.classList.remove('text-[var(--text-muted)]');
+          }
+          if (mNav) {
+            mNav.className = "whitespace-nowrap py-1 px-2 text-blue-600 font-bold";
+          }
+        } else {
+          sec.classList.add('hidden');
+          if (nav) {
+            nav.classList.remove('tab-active');
+            nav.classList.add('text-[var(--text-muted)]');
+          }
+          if (mNav) {
+            mNav.className = "whitespace-nowrap py-1 px-2 text-[var(--text-muted)]";
+          }
+        }
+      });
+
+      if (tabId === 'archive') {
+        renderArchive();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 3. 아카이브 게시판 렌더링 로직
+    // ==========================================
+    function renderArchive() {
+      const posts = getArchivePosts();
+      
+      // 필터링 및 검색
+      const filtered = posts.filter(item => {
+        const matchCat = (currentCategory === 'all' || item.category === currentCategory);
+        const matchSearch = searchKeyword === '' || 
+          item.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          item.takeaway.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          item.bullets.some(b => b.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+          item.date.includes(searchKeyword);
+        return matchCat && matchSearch;
+      });
+
+      // 개수 갱신
+      document.getElementById('archive-count-badge').innerText = `총 ${filtered.length}건의 브리핑 표시 중`;
+
+      // 선택된 포스트 결정
+      if (!selectedPostId || !filtered.find(p => p.id === selectedPostId)) {
+        selectedPostId = filtered.length > 0 ? filtered[0].id : null;
+      }
+
+      // 좌측 리스트 렌더링
+      const listContainer = document.getElementById('archive-list-container');
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-8 text-center bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl text-[var(--text-muted)] text-xs">
+            <span class="text-3xl block mb-2">🔍</span>
+            일치하는 경제 브리핑 게시글이 없습니다.<br>검색어나 카테고리 필터를 변경해 보세요.
+          </div>
+        `;
+        document.getElementById('archive-detail-container').innerHTML = `
+          <div class="p-12 text-center text-[var(--text-muted)] text-xs">
+            선택된 게시글이 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(post => {
+        const isSelected = post.id === selectedPostId;
+        const catBadgeColor = getCatBadgeStyle(post.category);
+        return `
+          <div onclick="selectArchivePost('${post.id}')" class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-blue-400 cursor-pointer transition shadow-sm ${isSelected ? 'active-archive-item' : ''}">
+            <div class="flex items-center justify-between text-[11px] mb-1.5">
+              <span class="font-bold px-2 py-0.5 rounded ${catBadgeColor}">${post.categoryName}</span>
+              <span class="text-[var(--text-muted)]">${post.date} (${post.source})</span>
+            </div>
+            <h4 class="font-bold text-sm text-[var(--text-main)] mb-1 leading-snug line-clamp-2">
+              ${post.title}
+            </h4>
+            <p class="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
+              ${post.bullets[0]}
+            </p>
+            <div class="mt-2.5 pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-[11px]">
+              <span class="text-blue-600 dark:text-blue-400 font-medium truncate max-w-[240px]">
+                💡 ${post.takeaway}
+              </span>
+              <span class="text-[var(--text-muted)] text-[10px] whitespace-nowrap">상세보기 →</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 우측 상세 뷰 렌더링
+      renderArchiveDetail(selectedPostId);
+    }
+
+    function selectArchivePost(id) {
+      selectedPostId = id;
+      renderArchive();
+    }
+
+    function renderArchiveDetail(id) {
+      const container = document.getElementById('archive-detail-container');
+      const posts = getArchivePosts();
+      const post = posts.find(p => p.id === id);
+
+      if (!post) {
+        container.innerHTML = `<div class="p-12 text-center text-xs text-[var(--text-muted)]">게시글을 선택해 주세요.</div>`;
+        return;
+      }
+
+      const catBadge = getCatBadgeStyle(post.category);
+      const snapshot = post.marketSnapshot || { nasdaq: "-", kospi: "-", fx: "-", us10y: "-" };
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <!-- 상단 메타 정보 -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--border-color)]">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold px-2.5 py-1 rounded ${catBadge}">${post.categoryName}</span>
+              <span class="text-xs text-[var(--text-muted)]">보도: <strong>${post.source}</strong></span>
+              <span class="text-xs text-[var(--text-muted)]">· ${post.date} ${post.time || ''}</span>
+            </div>
+            <button onclick="deleteArchivePost('${post.id}')" class="text-xs text-red-500 hover:text-red-700 transition" title="게시글 삭제">
+              삭제 ✕
+            </button>
+          </div>
+
+          <!-- 헤드라인 제목 -->
+          <h2 class="text-lg sm:text-xl font-extrabold text-[var(--text-main)] leading-snug">
+            ${post.title}
+          </h2>
+
+          <!-- 당시 시장 핵심 지표 스냅샷 박스 -->
+          <div class="bg-[var(--body-bg)] border border-[var(--border-color)] rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+            <div>
+              <div class="text-[10px] text-[var(--text-muted)]">당시 나스닥</div>
+              <div class="font-bold text-[var(--text-main)]">${snapshot.nasdaq}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-[var(--text-muted)]">당시 코스피</div>
+              <div class="font-bold text-[var(--text-main)]">${snapshot.kospi}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-[var(--text-muted)]">원/달러 환율</div>
+              <div class="font-bold text-[var(--text-main)]">${snapshot.fx}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-[var(--text-muted)]">미 국채 10년</div>
+              <div class="font-bold text-[var(--text-main)]">${snapshot.us10y}</div>
+            </div>
+          </div>
+
+          <!-- 3줄 핵심 요약 리포트 -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
+              <span>📋</span> 핵심 3줄 요약 (Key Summary)
+            </h4>
+            <div class="bg-[var(--body-bg)] p-4 rounded-xl border border-[var(--border-color)] space-y-2 text-xs leading-relaxed text-[var(--text-main)]">
+              ${post.bullets.map(b => `<div class="flex items-start gap-2"><span>•</span><div>${b}</div></div>`).join('')}
+            </div>
+          </div>
+
+          <!-- 경제 공부 포인트 & 투자자 대응 가이드 -->
+          <div class="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/60 border border-blue-200 dark:border-blue-900 text-xs space-y-2">
+            <div class="font-bold text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+              <span>💡</span> 경제 초보자를 위한 공부 포인트 & 시장 대처법
+            </div>
+            <p class="text-[var(--text-main)] leading-relaxed font-medium">
+              ${post.takeaway}
+            </p>
+          </div>
+
+          <!-- 연관 AI 질문 바로가기 액션 바 -->
+          <div class="pt-2 flex items-center justify-between text-xs">
+            <span class="text-[var(--text-muted)]">이 뉴스가 주가에 미칠 영향이 더 궁금하다면?</span>
+            <button onclick="askChatbotConcept('${post.title} 뉴스에 대해 초보자 눈높이로 더 자세히 설명해줘')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1">
+              <span>🤖</span> AI 멘토에게 질문하기
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function getCatBadgeStyle(cat) {
+      switch(cat) {
+        case 'fed': return 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300';
+        case 'fx': return 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300';
+        case 'tech': return 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300';
+        case 'oil': return 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300';
+        default: return 'bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)]';
+      }
+    }
+
+    function filterArchive(cat) {
+      currentCategory = cat;
+      const buttons = document.querySelectorAll('.cat-filter-btn');
+      buttons.forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.className = "cat-filter-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold";
+        } else {
+          btn.className = "cat-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)] hover:bg-slate-200";
+        }
+      });
+      renderArchive();
+    }
+
+    function handleArchiveSearch() {
+      searchKeyword = document.getElementById('archive-search-input').value.trim();
+      renderArchive();
+    }
+
+    function deleteArchivePost(id) {
+      if (confirm("이 경제 브리핑을 아카이브에서 삭제하시겠습니까?")) {
+        let posts = getArchivePosts();
+        posts = posts.filter(p => p.id !== id);
+        saveArchivePosts(posts);
+        selectedPostId = null;
+        renderArchive();
+        renderDailyTopNews();
+      }
+    }
+
+    // ==========================================
+    // 4. 모달: 새 데일리 브리핑 등록
+    // ==========================================
+    function openNewPostModal() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-date').value = today;
+      document.getElementById('modal-title').value = '';
+      document.getElementById('modal-bullets').value = '';
+      document.getElementById('modal-takeaway').value = '';
+      document.getElementById('modal-source').value = '경제신문';
+      document.getElementById('new-post-modal').classList.remove('hidden');
+    }
+
+    function closeNewPostModal() {
+      document.getElementById('new-post-modal').classList.add('hidden');
+    }
+
+    function handleNewPostSubmit(e) {
+      e.preventDefault();
+      const date = document.getElementById('modal-date').value;
+      const cat = document.getElementById('modal-cat').value;
+      const catNames = { fed: '미국 연준 / 금리', fx: '국내 외환 / 환율', tech: '반도체 & 빅테크', oil: '원자재 & 유가' };
+      const source = document.getElementById('modal-source').value;
+      const title = document.getElementById('modal-title').value;
+      const bulletsRaw = document.getElementById('modal-bullets').value;
+      const takeaway = document.getElementById('modal-takeaway').value;
+
+      const bullets = bulletsRaw.split('\n')
+        .map(b => b.replace(/^[•\-\*]\s*/, '').trim())
+        .filter(b => b.length > 0);
+
+      const newPost = {
+        id: "post-" + Date.now(),
+        date: date,
+        time: "직접등록",
+        category: cat,
+        categoryName: catNames[cat] || '경제 뉴스',
+        source: source,
+        title: title,
+        bullets: bullets.length > 0 ? bullets : [title],
+        takeaway: takeaway,
+        marketSnapshot: { nasdaq: "21,480", kospi: "2,610", fx: "1,394원", us10y: "4.38%" }
+      };
+
+      const posts = getArchivePosts();
+      posts.unshift(newPost); // 최신에 추가
+      saveArchivePosts(posts);
+
+      closeNewPostModal();
+      selectedPostId = newPost.id;
+      renderArchive();
+      renderDailyTopNews();
+      alert("새 경제 브리핑이 아카이브 게시판에 등록되었습니다!");
+    }
+
+    // ==========================================
+    // 5. 데일리 탭 메인 화면 뉴스 연동
+    // ==========================================
+    function renderDailyTopNews() {
+      const posts = getArchivePosts();
+      const top3 = posts.slice(0, 3);
+      const container = document.getElementById('daily-top-news');
+      if (!container) return;
+
+      container.innerHTML = top3.map(post => {
+        const catBadge = getCatBadgeStyle(post.category);
+        return `
+          <div class="p-4 rounded-xl border border-[var(--border-color)] hover:border-blue-300 transition bg-[var(--body-bg)] cursor-pointer" onclick="goToArchiveDetail('${post.id}')">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${catBadge}">${post.categoryName}</span>
+              <span class="text-xs text-[var(--text-muted)]">${post.source} · ${post.date}</span>
+            </div>
+            <h4 class="font-bold text-sm text-[var(--text-main)] mb-1">
+              ${post.title}
+            </h4>
+            <div class="text-xs text-[var(--text-muted)] space-y-1 leading-relaxed">
+              ${post.bullets.map(b => `<p>• ${b}</p>`).join('')}
+              <p class="text-blue-600 dark:text-blue-400 font-medium pt-1">💡 공부 포인트: ${post.takeaway}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function goToArchiveDetail(postId) {
+      selectedPostId = postId;
+      switchTab('archive');
+    }
+
+    // ==========================================
+    // 6. 기업 분석기 & 시뮬레이터 & 챗봇 (기존 로직 보존)
+    // ==========================================
+    const companyPresets = {
+      samsung: { name: "삼성전자 (005930) - 국내 대표 하드웨어/반도체", roe: 12.5, per: 11.8, debt: 26.0, growth: 15.0, moat: "narrow" },
+      apple: { name: "애플 (AAPL) - 글로벌 강력한 생태계와 해자", roe: 48.0, per: 32.0, debt: 140.0, growth: 9.0, moat: "wide" },
+      nvidia: { name: "엔비디아 (NVDA) - AI 혁신 주도 초고성장주", roe: 55.0, per: 46.0, debt: 40.0, growth: 75.0, moat: "wide" },
+      value_trap: { name: "저PBR의 함정 기업 (가상의 부실 기업)", roe: 2.1, per: 5.5, debt: 220.0, growth: -12.0, moat: "none" }
+    };
+
+    function loadCompanyPreset(presetKey) {
+      const p = companyPresets[presetKey];
+      if (!p) return;
+      document.getElementById('current-company-name').innerText = p.name;
+      document.getElementById('input-roe').value = p.roe;
+      document.getElementById('input-per').value = p.per;
+      document.getElementById('input-debt').value = p.debt;
+      document.getElementById('input-growth').value = p.growth;
+      document.getElementById('select-moat').value = p.moat;
+      calculateCompanyScore();
+    }
+
+    function calculateCompanyScore() {
+      const roe = parseFloat(document.getElementById('input-roe').value);
+      const per = parseFloat(document.getElementById('input-per').value);
+      const debt = parseFloat(document.getElementById('input-debt').value);
+      const growth = parseFloat(document.getElementById('input-growth').value);
+      const moat = document.getElementById('select-moat').value;
+
+      document.getElementById('label-roe').innerText = `${roe.toFixed(1)}%`;
+      document.getElementById('label-per').innerText = `${per.toFixed(1)}배`;
+      document.getElementById('label-debt').innerText = `${debt.toFixed(1)}%`;
+      document.getElementById('label-growth').innerText = `${growth > 0 ? '+' : ''}${growth.toFixed(1)}%`;
+
+      let score = 0;
+      if (roe >= 25) score += 25; else if (roe >= 15) score += 22; else if (roe >= 10) score += 16; else if (roe >= 5) score += 10; else score += 2;
+      if (per >= 8 && per <= 20) score += 20; else if (per > 20 && per <= 35) score += 15; else if (per < 8) score += 12; else score += 8;
+      if (debt <= 50) score += 25; else if (debt <= 100) score += 20; else if (debt <= 150) score += 14; else if (debt <= 200) score += 8; else score += 2;
+      if (growth >= 30) score += 15; else if (growth >= 10) score += 12; else if (growth >= 0) score += 8; else score += 0;
+      if (moat === 'wide') score += 15; else if (moat === 'narrow') score += 10; else score += 2;
+
+      document.getElementById('analysis-total-score').innerHTML = `${score}<span class="text-sm text-[var(--text-muted)] font-normal"> / 100점</span>`;
+      const badge = document.getElementById('analysis-grade-badge');
+      const oneLiner = document.getElementById('analysis-one-liner');
+
+      if (score >= 85) {
+        badge.innerHTML = `<span class="text-emerald-600">S 등급 (초우량 퀄리티 기업)</span>`;
+        oneLiner.innerText = "탁월한 자본 효율성과 해자를 갖춘 최고의 기업입니다. 장기 적립식 투자에 적합합니다.";
+      } else if (score >= 70) {
+        badge.innerHTML = `<span class="text-blue-600">A 등급 (우수 우량주)</span>`;
+        oneLiner.innerText = "수익성과 재무 안전성이 양호하여 시장 변동기에도 견고한 성과를 기대할 수 있습니다.";
+      } else if (score >= 50) {
+        badge.innerHTML = `<span class="text-amber-600">B 등급 (보통 / 관찰 필요)</span>`;
+        oneLiner.innerText = "특정 영역(성장성 둔화 또는 다소 높은 밸류에이션)에서 모니터링이 필요한 구간입니다.";
+      } else {
+        badge.innerHTML = `<span class="text-red-500">C 등급 (투자 주의 / 고위험)</span>`;
+        oneLiner.innerText = "높은 부채 또는 역성장으로 인해 펀더멘털 위험이 있습니다. 초보자는 신중해야 합니다.";
+      }
+
+      document.getElementById('status-roe').innerText = roe >= 12 ? '● 양호' : (roe >= 5 ? '● 보통' : '● 미흡');
+      document.getElementById('status-debt').innerText = debt <= 100 ? '● 안전' : (debt <= 180 ? '● 보통' : '● 위험');
+      document.getElementById('status-per').innerText = (per <= 25 && per >= 8) ? '● 적정' : (per < 8 ? '● 저평가/주의' : '● 고평가/성장');
+      document.getElementById('status-growth').innerText = growth > 15 ? '● 고성장' : (growth >= 0 ? '● 완만' : '● 역성장');
+    }
+
+    const macroScenarios = {
+      rate_up: {
+        title: "기준금리를 인상했을 때 일어나는 5단계 도미노",
+        badge: "긴축 정책 (Tightening)",
+        steps: [
+          { tag: "STEP 1", title: "시중 대출·예금 금리 상승", desc: "은행 예금 이자가 오르고, 개인과 기업의 대출 이자 부담이 급증합니다." },
+          { tag: "STEP 2", title: "소비 및 설비투자 위축", desc: "이자 갚느라 가계가 지갑을 닫고, 기업도 공장 증설을 미루며 통화량이 감소합니다." },
+          { tag: "STEP 3", title: "주식·부동산 자산 가격 조정", desc: "안전한 은행 예금으로 돈이 이동하고, 미래 가치를 당겨온 나스닥 기술주가 할인율 상승으로 하락 압력을 받습니다." },
+          { tag: "STEP 4", title: "물가(인플레이션) 진정", desc: "소비 수요가 둔화되면서 치솟던 물가가 서서히 꺾여 안정화 단계에 접어듭니다." },
+          { tag: "투자자 대처", title: "현금 및 배당가치주 분할매수", desc: "빚이 없고 잉여현금이 풍부한 가치주를 담고, 단기 고금리 파킹 채권 ETF로 현금 흐름을 확보합니다." }
+        ]
+      },
+      rate_down: {
+        title: "기준금리를 인하했을 때 일어나는 5단계 도미노",
+        badge: "완화 정책 (Easing)",
+        steps: [
+          { tag: "STEP 1", title: "자금 조달 비용 하락", desc: "대출 이자가 낮아져 가계와 기업이 돈을 빌리기 쉬워집니다." },
+          { tag: "STEP 2", title: "시중 유동성(돈) 팽창", desc: "예금 이자가 매력 없어져 시중 자금이 은행 밖으로 흘러나옵니다." },
+          { tag: "STEP 3", title: "나스닥·성장주 강한 랠리", desc: "미래 실적 성장 잠재력이 높은 혁신 기술주와 주식시장 전반으로 유동성이 몰립니다." },
+          { tag: "STEP 4", title: "부동산·실물자산 가격 상승", desc: "돈의 가치가 하락함에 따라 실물 자산 가격이 오르고 인플레이션 압력이 재발할 수 있습니다." },
+          { tag: "투자자 대처", title: "혁신 성장주 및 지수 추종 ETF", desc: "레버리지 효과와 성장 속도가 빠른 나스닥 100, S&P 500 ETF의 비중을 적극 확대합니다." }
+        ]
+      },
+      fx_up: {
+        title: "원·달러 환율이 급등(원화 약세)했을 때 일어나는 5단계 도미노",
+        badge: "고환율 국면 (Strong Dollar)",
+        steps: [
+          { tag: "STEP 1", title: "달러 가치 상승 & 원화 평가절하", desc: "1달러를 사기 위해 더 많은 원화를 지불해야 하는 상황이 됩니다." },
+          { tag: "STEP 2", title: "외국인 투자자 환차손 우려 매도", desc: "국내 주식을 들고 있는 외국인은 주가가 가만히 있어도 달러 환산 손실을 보므로 매도세를 보입니다." },
+          { tag: "STEP 3", title: "수입 물가 급등 ➡️ 국내 물가 자극", desc: "원유, 곡물 등 원자재 수입 비용이 뛰어 국내 공산품 가격과 물가를 자극합니다." },
+          { tag: "STEP 4", title: "수출 대형주 환차익 호재", desc: "반도체, 자동차, 조선 등 해외에서 달러로 대금을 받는 수출 기업의 원화 환산 매출은 대폭 증가합니다." },
+          { tag: "투자자 대처", title: "미국 달러 자산 & 수출 대표주 집중", desc: "해외 미국 주식이나 미국 국채(달러 표시 자산), 그리고 환율 수혜를 입는 수출 대형주 위주로 포트폴리오를 구성합니다." }
+        ]
+      },
+      oil_up: {
+        title: "국제유가가 급등했을 때 일어나는 5단계 도미노",
+        badge: "스태그플레이션 경계 (Energy Shock)",
+        steps: [
+          { tag: "STEP 1", title: "에너지 및 물류 수송비 급등", desc: "원유는 모든 산업의 혈액이므로 항공, 해운, 운송 및 화학 원가가 즉각 상승합니다." },
+          { tag: "STEP 2", title: "헤드라인 물가(CPI) 재상승", desc: "휘발유와 난방비 가격이 오르며 인플레이션 지표가 다시 튀어 오릅니다." },
+          { tag: "STEP 3", title: "중앙은행의 금리 인하 중단", desc: "물가가 다시 오르므로 연준은 금리를 내리지 못하고 고금리를 오래 유지(Higher for Longer)하게 됩니다." },
+          { tag: "STEP 4", title: "기업 영업이익률 훼손", desc: "원가 부담을 소비자에게 전가하지 못하는 비필수 소비재 기업의 실적이 악화됩니다." },
+          { tag: "투자자 대처", title: "에너지 섹터 및 가격결정력 기업", desc: "정유/에너지 ETF(XLE)를 헤지 수단으로 활용하고, 원가 상승을 가격에 전가할 수 있는 해자 기업에 투자합니다." }
+        ]
+      }
+    };
+
+    function setMacroSimulation(key) {
+      const data = macroScenarios[key];
+      if (!data) return;
+
+      document.getElementById('sim-title').innerText = data.title;
+      document.getElementById('sim-badge').innerText = data.badge;
+
+      ['rate_up', 'rate_down', 'fx_up', 'oil_up'].forEach(k => {
+        const btn = document.getElementById(`btn-${k.replace('_', '-')}`);
+        if (k === key) {
+          btn.className = "p-3 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-bold text-xs text-left";
+        } else {
+          btn.className = "p-3 rounded-xl border border-[var(--border-color)] hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs text-left";
+        }
+      });
+
+      const container = document.getElementById('sim-cards-container');
+      container.innerHTML = data.steps.map((s, idx) => `
+        <div class="p-3.5 rounded-xl ${idx === 4 ? 'bg-amber-50 dark:bg-slate-800/80 border border-amber-200 dark:border-slate-700' : 'bg-slate-50 dark:bg-slate-800/80 border border-[var(--border-color)]'} text-xs space-y-1">
+          <span class="text-[10px] font-bold ${idx === 4 ? 'text-amber-700 dark:text-amber-400' : 'text-blue-600'}">${s.tag}</span>
+          <div class="font-bold text-[var(--text-main)]">${s.title}</div>
+          <p class="text-[var(--text-muted)] text-[11px] leading-relaxed">${s.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    const knowledgeBase = [
+      {
+        keywords: ['금리', '나스닥', '기술주', '하락', '왜'],
+        response: `<strong>💡 기준금리가 오를 때 나스닥 기술주가 민감하게 하락하는 핵심 이유</strong><br><br>
+1. <strong>미래 현금의 할인율 증가:</strong> 나스닥 기술주는 미래 수익에 높은 가치를 매깁니다. 금리가 연 5%로 높아지면 미래 현금의 현재 가치가 크게 깎입니다.<br>
+2. <strong>대체 안전자산(예금/채권)의 매력:</strong> 무위험 국채 금리가 높아지면 위험자산 기피 심리가 커집니다.<br>
+3. <strong>이자 부담:</strong> 신기술 투자를 위한 차입금 이자 비용이 증가합니다.<br><br>
+📌 <strong>대처법:</strong> 자체 현금 창출력(FCF)이 막강한 빅테크 위주로 포트폴리오를 압축하세요.`
+      },
+      {
+        keywords: ['per', 'pbr', '차이', '지표'],
+        response: `<strong>📊 PER과 PBR의 차이점 요약</strong><br><br>
+• <strong>PER (주가수익비율):</strong> 이익 대비 주가 수준 (원금 회수에 몇 년 걸리는가?)<br>
+• <strong>PBR (주가순자산비율):</strong> 순자산(청산가치) 대비 주가 수준<br><br>
+⚠️ <strong>주의:</strong> PER, PBR이 낮다고 무조건 사면 안 됩니다. 저평가의 함정(Value Trap)을 피하기 위해 반드시 <strong>ROE(자기자본이익률)</strong>와 함께 비교해야 합니다.`
+      },
+      {
+        keywords: ['배당', '배당주', '고르는'],
+        response: `<strong>💰 좋은 배당주를 고르는 3대 원칙</strong><br><br>
+1. <strong>배당성향 40~70%:</strong> 번 돈의 적정량을 배당하고 나머지는 재투자하는 기업.<br>
+2. <strong>배당 성장 지속성:</strong> 지난 10년 이상 매년 배당금을 올려준 기업.<br>
+3. <strong>잉여현금흐름(FCF):</strong> 회계상 이익이 아닌 실제 통장에 꽂히는 현금이 풍부한 기업.`
+      },
+      {
+        keywords: ['환율', '1400', '외국인', '코스피', '원달러'],
+        response: `<strong>💵 원·달러 환율 1,400원대가 국내 주식시장에 미치는 영향</strong><br><br>
+1. 외국인 투자자의 <strong>환차손 우려 매도</strong> 발생.<br>
+2. 원유 등 수입 원자재 가격 급등으로 국내 제조업 <strong>마진 훼손</strong>.<br>
+3. 반면 반도체, 자동차, 조선 등 <strong>달러를 벌어들이는 수출 기업</strong>은 원화 환산 매출 증가 수혜.`
+      }
+    ];
+
+    function handleChatSubmit(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendChatMessage('user', text);
+      input.value = '';
+
+      const loadingId = 'loading-' + Date.now();
+      appendChatLoading(loadingId);
+
+      setTimeout(() => {
+        removeChatLoading(loadingId);
+        const reply = generateBotReply(text);
+        appendChatMessage('bot', reply);
+      }, 700);
+    }
+
+    function sendQuickPrompt(promptText) {
+      document.getElementById('chat-input').value = promptText;
+      handleChatSubmit();
+    }
+
+    function askChatbotConcept(promptText) {
+      switchTab('chatbot');
+      document.getElementById('chat-input').value = promptText;
+      handleChatSubmit();
+    }
+
+    function generateBotReply(query) {
+      const q = query.toLowerCase();
+      for (const item of knowledgeBase) {
+        if (item.keywords.some(k => q.includes(k))) {
+          return item.response;
+        }
+      }
+      return `<strong>질문해 주신 내용: "${query}"</strong><br><br>
+좋은 질문입니다! 경제와 투자에서 기업을 평가하거나 시장을 볼 때 가장 중요한 원칙은 <strong>'지속 가능한 현금 창출력'</strong>과 <strong>'거시 환경(금리/환율)과의 조화'</strong>입니다.<br><br>
+• <strong>팁:</strong> 상단 <strong>[🗂️ 뉴스 요약 아카이브]</strong> 탭에서 최근 일자별 헤드라인과 분석 리포트를 확인해 보세요!<br>
+• 더 구체적인 지표나 용어(예: <em>"ROE가 뭔가요?"</em>, <em>"금리 인상 영향"</em> 등)를 질문해 주시면 더욱 상세하게 설명해 드리겠습니다! 😊`;
+    }
+
+    function appendChatMessage(sender, content) {
+      const container = document.getElementById('chat-messages');
+      const msgDiv = document.createElement('div');
+      
+      if (sender === 'user') {
+        msgDiv.className = 'flex justify-end';
+        msgDiv.innerHTML = `
+          <div class="bg-blue-600 text-white rounded-2xl rounded-tr-none p-3 max-w-[80%] leading-relaxed shadow-sm">
+            ${content}
+          </div>
+        `;
+      } else {
+        msgDiv.className = 'flex items-start gap-2.5 max-w-[85%]';
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0 shadow">
+            🤖
+          </div>
+          <div class="bg-blue-50/70 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-2xl rounded-tl-none p-3.5 leading-relaxed text-[var(--text-main)] shadow-sm">
+            ${content}
+          </div>
+        `;
+      }
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function appendChatLoading(id) {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.id = id;
+      div.className = 'flex items-start gap-2.5 max-w-[85%]';
+      div.innerHTML = `
+        <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0">
+          🤖
+        </div>
+        <div class="bg-blue-50/70 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-2xl rounded-tl-none p-3 text-[var(--text-muted)] text-xs flex items-center gap-2">
+          <span>생각하는 중</span>
+          <span class="inline-flex gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style="animation-delay: 0.2s"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style="animation-delay: 0.4s"></span>
+          </span>
+        </div>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeChatLoading(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function clearChat() {
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = `
+        <div class="flex items-start gap-2.5 max-w-[85%]">
+          <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0">
+            🤖
+          </div>
+          <div class="bg-blue-50/70 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-2xl rounded-tl-none p-3.5 leading-relaxed text-[var(--text-main)]">
+            대화가 초기화되었습니다. 궁금한 경제 지표나 투자 분석에 대해 편하게 물어보세요!
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // 7. 페이지 초기 로딩 & 클라우드 원격 동기화
+    // ==========================================
+    async function syncRemoteBriefings() {
+      try {
+        const res = await fetch('data/daily_briefings.json?t=' + Date.now());
+        if (res.ok) {
+          const remoteData = await res.json();
+          if (remoteData && remoteData.briefings && remoteData.briefings.length > 0) {
+            console.log("[Auto-Sync] Remote cloud briefings loaded:", remoteData.briefings.length);
+            
+            const localPosts = getArchivePosts();
+            const existingTitles = new Set(localPosts.map(p => p.title));
+            let newAdded = 0;
+            
+            for (const rb of remoteData.briefings) {
+              if (!existingTitles.has(rb.title)) {
+                localPosts.unshift(rb);
+                existingTitles.add(rb.title);
+                newAdded++;
+              }
+            }
+            if (newAdded > 0) {
+              saveArchivePosts(localPosts);
+            }
+
+            if (remoteData.updatedAt) {
+              const dt = new Date(remoteData.updatedAt);
+              const fmt = `${dt.getFullYear()}.${dt.getMonth()+1}.${dt.getDate()} 기준 (클라우드 매일 자동갱신)`;
+              const badge = document.getElementById('current-date-badge');
+              if (badge) badge.innerText = fmt;
+            }
+
+            renderArchive();
+            renderDailyTopNews();
+          }
+        }
+      } catch (err) {
+        console.log("[Info] Operating in local offline mode (using cached data).", err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      calculateCompanyScore();
+      setMacroSimulation('rate_up');
+      renderDailyTopNews();
+      syncRemoteBriefings();
+    });
+  </script>
+</body>
+</html>
