@@ -1148,6 +1148,16 @@
               <span>🤖</span> AI 멘토에게 질문하기
             </button>
           </div>
+
+          <!-- 근거 기사 원문 링크 바 -->
+          <div class="pt-2.5 mt-2 border-t border-[var(--border-color)] flex items-center justify-between text-xs">
+            <span class="text-[var(--text-muted)] flex items-center gap-1">
+              <span>🔗</span> 보도 출처: <strong class="text-[var(--text-main)]">${post.source || '경제 언론사'}</strong>
+            </span>
+            <a href="${post.link || ('https://news.google.com/search?q=' + encodeURIComponent(post.title) + '&hl=ko&gl=KR&ceid=KR:ko')}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold hover:underline bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-md transition border border-slate-200 dark:border-slate-700">
+              <span>📰</span> 근거 기사 원문 보기 ↗
+            </a>
+          </div>
         </div>
       `;
     }
