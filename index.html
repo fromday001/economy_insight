@@ -89,7 +89,7 @@
           </button>
         </nav>
 
-        <!-- 우측 액션 (챗봇 바로가기 & 오늘 날짜) -->
+        <!-- 우측 액션 (챗봇 바로가기 & 오늘 날짜 & 관리자 버튼) -->
         <div class="flex items-center space-x-3">
           <span class="text-xs bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900" id="current-date-badge">
             2026.11.15 기준
@@ -97,16 +97,21 @@
           <button onclick="switchTab('chatbot')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1">
             <span>💬</span> 멘토에게 질문
           </button>
+          <!-- 관리자 로그인 시에만 최우측에 표시되는 관리자 버튼 -->
+          <a href="admin/" id="header-admin-btn" style="display: none;" class="items-center gap-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition cursor-pointer" title="관리자 센터로 이동">
+            <span>👑</span> 관리자
+          </a>
         </div>
       </div>
 
       <!-- 모바일 탭 바 -->
-      <div class="flex md:hidden overflow-x-auto py-2 space-x-4 text-xs font-semibold border-t border-[var(--border-color)] custom-scroll">
+      <div class="flex md:hidden overflow-x-auto py-2 space-x-4 text-xs font-semibold border-t border-[var(--border-color)] custom-scroll items-center">
         <button onclick="switchTab('briefing')" id="m-nav-briefing" class="whitespace-nowrap py-1 px-2 text-blue-600">오늘의 브리핑</button>
         <button onclick="switchTab('archive')" id="m-nav-archive" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">뉴스 게시판</button>
         <button onclick="switchTab('company')" id="m-nav-company" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">기업 선별 실습</button>
         <button onclick="switchTab('macro')" id="m-nav-macro" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">경제 상식</button>
         <button onclick="switchTab('chatbot')" id="m-nav-chatbot" class="whitespace-nowrap py-1 px-2 text-[var(--text-muted)]">AI 챗봇</button>
+        <a href="admin/" id="m-nav-admin" style="display: none;" class="whitespace-nowrap py-1 px-2 text-purple-600 dark:text-purple-400 font-bold">👑 관리자</a>
       </div>
     </div>
   </header>
@@ -357,8 +362,8 @@
             </p>
           </div>
 
-          <!-- 새 브리핑 직접 작성 버튼 -->
-          <div class="flex items-center gap-2">
+          <!-- 새 브리핑 직접 작성 버튼 (관리자 로그인 시에만 표시) -->
+          <div id="admin-archive-actions" style="display: none;" class="items-center gap-2">
             <button onclick="openNewPostModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center gap-1.5 whitespace-nowrap">
               <span>✍️</span> 새 브리핑 등록
             </button>
@@ -1091,9 +1096,10 @@
               <span class="text-xs text-[var(--text-muted)]">보도: <strong>${post.source}</strong></span>
               <span class="text-xs text-[var(--text-muted)]">· ${post.date} ${post.time || ''}</span>
             </div>
-            <button onclick="deleteArchivePost('${post.id}')" class="text-xs text-red-500 hover:text-red-700 transition" title="게시글 삭제">
+            ${isAdminUser() ? `
+            <button onclick="deleteArchivePost('${post.id}')" class="text-xs text-red-500 hover:text-red-700 font-semibold transition" title="관리자 전용: 게시글 삭제">
               삭제 ✕
-            </button>
+            </button>` : ''}
           </div>
 
           <!-- 헤드라인 제목 -->
@@ -1612,7 +1618,35 @@
       }
     }
 
+    // 관리자 인증 상태 확인 함수
+    function isAdminUser() {
+      return localStorage.getItem('econ_admin_auth') === 'simds';
+    }
+
+    function checkAdminState() {
+      const isAdmin = isAdminUser();
+      const headerAdminBtn = document.getElementById('header-admin-btn');
+      const mobileAdminBtn = document.getElementById('m-nav-admin');
+      const adminActions = document.getElementById('admin-archive-actions');
+
+      if (headerAdminBtn) {
+        headerAdminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+      }
+      if (mobileAdminBtn) {
+        mobileAdminBtn.style.display = isAdmin ? 'inline-block' : 'none';
+      }
+      if (adminActions) {
+        adminActions.style.display = isAdmin ? 'flex' : 'none';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      checkAdminState();
+      if (sessionStorage.getItem('open_new_post') === 'true') {
+        sessionStorage.removeItem('open_new_post');
+        switchTab('archive');
+        setTimeout(() => { if (typeof openNewPostModal === 'function') openNewPostModal(); }, 150);
+      }
       calculateCompanyScore();
       setMacroSimulation('rate_up');
       renderDailyTopNews();
