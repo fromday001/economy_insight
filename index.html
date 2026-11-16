@@ -392,16 +392,23 @@
         </div>
       </div>
 
-      <!-- 게시판 분할 화면: 좌측 리스트(4) vs 우측 상세 뷰(8) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- 좌측: 게시글 목록 (5열) -->
-        <div class="lg:col-span-5 space-y-3" id="archive-list-container">
-          <!-- 동적으로 렌더링 -->
+      <!-- 게시판 레이아웃: 상단 상세 뷰 (가로 전체 너비) + 하단 목록 테이블 (가로 전체 너비 & 내용 가로 맞춤 + 페이지네이션) -->
+      <div class="space-y-6">
+        <!-- 1. 상단: 선택된 게시글 상세 리포트 뷰 (전체 가로 너비) -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 sm:p-8 shadow-sm space-y-5" id="archive-detail-container">
+          <!-- 선택된 상세 글 동적 렌더링 -->
         </div>
 
-        <!-- 우측: 선택된 게시글 상세 리포트 뷰 (7열) -->
-        <div class="lg:col-span-7 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 shadow-sm sticky top-24 space-y-5" id="archive-detail-container">
-          <!-- 선택된 상세 글 렌더링 -->
+        <!-- 2. 하단: 전체 너비 게시판 목록 및 페이지네이션 -->
+        <div class="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-4 sm:p-6 shadow-sm">
+          <div class="space-y-1" id="archive-list-container">
+            <!-- 동적으로 렌더링되는 행 목록 -->
+          </div>
+
+          <!-- 하단 페이지네이션 번호 바 -->
+          <div id="archive-pagination-container" class="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center justify-center gap-1.5 text-xs">
+            <!-- 동적 페이지 번호 -->
+          </div>
         </div>
       </div>
     </section>
@@ -960,6 +967,8 @@
     let currentCategory = 'all';
     let searchKeyword = '';
     let selectedPostId = null;
+    let archiveCurrentPage = 1;
+    const archivePageSize = 10;
 
     // ==========================================
     // 2. 탭 전환 기능
@@ -1023,11 +1032,13 @@
         selectedPostId = filtered.length > 0 ? filtered[0].id : null;
       }
 
-      // 좌측 리스트 렌더링
+      // 리스트 컨테이너 및 페이지네이션 컨테이너
       const listContainer = document.getElementById('archive-list-container');
+      const paginationContainer = document.getElementById('archive-pagination-container');
+
       if (filtered.length === 0) {
         listContainer.innerHTML = `
-          <div class="p-8 text-center bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl text-[var(--text-muted)] text-xs">
+          <div class="p-8 text-center text-[var(--text-muted)] text-xs">
             <span class="text-3xl block mb-2">🔍</span>
             일치하는 경제 브리핑 게시글이 없습니다.<br>검색어나 카테고리 필터를 변경해 보세요.
           </div>
@@ -1037,41 +1048,120 @@
             선택된 게시글이 없습니다.
           </div>
         `;
+        if (paginationContainer) paginationContainer.innerHTML = '';
         return;
       }
 
-      listContainer.innerHTML = filtered.map(post => {
+      // 페이지네이션 계산 (한 페이지에 10개씩)
+      const totalPages = Math.ceil(filtered.length / archivePageSize) || 1;
+      if (archiveCurrentPage > totalPages) archiveCurrentPage = totalPages;
+      if (archiveCurrentPage < 1) archiveCurrentPage = 1;
+
+      const startIndex = (archiveCurrentPage - 1) * archivePageSize;
+      const pagePosts = filtered.slice(startIndex, startIndex + archivePageSize);
+
+      // 전체 너비 테이블 행 목록 렌더링 (가로 길이에 맞춘 내용)
+      listContainer.innerHTML = pagePosts.map(post => {
         const isSelected = post.id === selectedPostId;
         const catBadgeColor = getCatBadgeStyle(post.category);
+        const excerpt = (post.bullets && post.bullets[0]) ? post.bullets[0] : (post.takeaway || '');
+
         return `
-          <div onclick="selectArchivePost('${post.id}')" class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-blue-400 cursor-pointer transition shadow-sm ${isSelected ? 'active-archive-item' : ''}">
-            <div class="flex items-center justify-between text-[11px] mb-1.5">
-              <span class="font-bold px-2 py-0.5 rounded ${catBadgeColor}">${post.categoryName}</span>
-              <span class="text-[var(--text-muted)]">${post.date} (${post.source})</span>
-            </div>
-            <h4 class="font-bold text-sm text-[var(--text-main)] mb-1 leading-snug line-clamp-2">
-              ${post.title}
-            </h4>
-            <p class="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
-              ${post.bullets[0]}
-            </p>
-            <div class="mt-2.5 pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-[11px]">
-              <span class="text-blue-600 dark:text-blue-400 font-medium truncate max-w-[240px]">
-                💡 ${post.takeaway}
+          <div onclick="selectArchivePost('${post.id}')"
+               class="flex items-center justify-between py-3.5 px-3 border-b border-dashed border-[var(--border-color)] hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl cursor-pointer transition gap-3 sm:gap-6 ${isSelected ? 'bg-amber-50/70 dark:bg-amber-950/20' : ''}">
+            
+            <!-- 1. 카테고리 뱃지 (고정 너비) -->
+            <div class="shrink-0 w-24 sm:w-28 text-center">
+              <span class="inline-block text-center w-full text-xs font-bold px-2 py-1 rounded whitespace-nowrap ${catBadgeColor}">
+                ${post.categoryName}
               </span>
-              <span class="text-[var(--text-muted)] text-[10px] whitespace-nowrap">상세보기 →</span>
+            </div>
+
+            <!-- 2. 헤드라인 제목 (볼드체) -->
+            <div class="font-bold text-xs sm:text-sm text-[var(--text-main)] shrink-0 max-w-[200px] sm:max-w-[280px] lg:max-w-[340px] truncate hover:text-blue-600 transition">
+              ${post.title}
+            </div>
+
+            <!-- 3. 내용 요약 (가로 길이에 맞춰 유연하게 꽉 채우고 말줄임) -->
+            <div class="hidden sm:block flex-1 min-w-0 text-xs text-[var(--text-muted)] truncate">
+              ${excerpt}
+            </div>
+
+            <!-- 4. 일자 및 출처 언론사 (우측 정렬) -->
+            <div class="text-xs text-[var(--text-muted)] whitespace-nowrap text-right shrink-0">
+              ${post.date} (${post.source})
             </div>
           </div>
         `;
       }).join('');
 
-      // 우측 상세 뷰 렌더링
+      // 페이지네이션 바 렌더링 (< 1 2 3 ... >)
+      if (paginationContainer) {
+        if (totalPages <= 1) {
+          paginationContainer.innerHTML = '';
+        } else {
+          let pagesHtml = '';
+          
+          // 이전 페이지 (<)
+          pagesHtml += `
+            <button onclick="changeArchivePage(${archiveCurrentPage - 1})" 
+                    class="px-2 py-1 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition ${archiveCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}" 
+                    ${archiveCurrentPage === 1 ? 'disabled' : ''}>
+              &lt;
+            </button>
+          `;
+
+          // 페이지 번호들 (1, 2, 3...)
+          for (let p = 1; p <= totalPages; p++) {
+            if (p === archiveCurrentPage) {
+              pagesHtml += `
+                <button class="px-2.5 py-1 text-sm font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400">
+                  ${p}
+                </button>
+              `;
+            } else {
+              pagesHtml += `
+                <button onclick="changeArchivePage(${p})" 
+                        class="px-2.5 py-1 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition cursor-pointer">
+                  ${p}
+                </button>
+              `;
+            }
+          }
+
+          // 다음 페이지 (>)
+          pagesHtml += `
+            <button onclick="changeArchivePage(${archiveCurrentPage + 1})" 
+                    class="px-2 py-1 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition ${archiveCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}" 
+                    ${archiveCurrentPage === totalPages ? 'disabled' : ''}>
+              &gt;
+            </button>
+          `;
+
+          paginationContainer.innerHTML = pagesHtml;
+        }
+      }
+
+      // 상단 상세 뷰 렌더링
       renderArchiveDetail(selectedPostId);
+    }
+
+    function changeArchivePage(newPage) {
+      archiveCurrentPage = newPage;
+      renderArchive();
+      const listEl = document.getElementById('archive-list-container');
+      if (listEl) {
+        listEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     }
 
     function selectArchivePost(id) {
       selectedPostId = id;
       renderArchive();
+      const detailEl = document.getElementById('archive-detail-container');
+      if (detailEl) {
+        detailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function renderArchiveDetail(id) {
@@ -1180,6 +1270,7 @@
 
     function filterArchive(cat) {
       currentCategory = cat;
+      archiveCurrentPage = 1;
       const buttons = document.querySelectorAll('.cat-filter-btn');
       buttons.forEach(btn => {
         if (btn.getAttribute('data-cat') === cat) {
@@ -1193,6 +1284,7 @@
 
     function handleArchiveSearch() {
       searchKeyword = document.getElementById('archive-search-input').value.trim();
+      archiveCurrentPage = 1;
       renderArchive();
     }
 
