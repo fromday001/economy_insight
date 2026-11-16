@@ -39,7 +39,6 @@ def fetch_market_indices():
     }
 
     try:
-        # Yahoo Finance quote summary endpoint
         for key, sym in symbols.items():
             url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(sym)}?interval=1d&range=2d"
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -88,7 +87,6 @@ def fetch_rss_news():
                 pub_date = item.find("pubDate").text if item.find("pubDate") is not None else ""
                 source = item.find("source").text if item.find("source") is not None else "경제신문"
                 
-                # '제목 - 언론사' 분리
                 clean_title = title
                 if " - " in title:
                     parts = title.rsplit(" - ", 1)
@@ -109,19 +107,19 @@ def fetch_rss_news():
 
 def summarize_with_gemini_or_rule(news_items, market_data):
     """
-    GEMINI_API_KEY 환경변수가 있으면 Gemini AI로 고품질 요약 및 인사이트 생성.
-    없으면 금융 전문 규칙 기반(Rule-based NLP)으로 정밀 요약 생성.
+    한국 시간(KST)을 기준으로 오늘 날짜와 시간을 생성합니다.
     """
     api_key = os.environ.get("GEMINI_API_KEY")
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
-    now_time = datetime.datetime.now().strftime("%H:%M")
+    kst = datetime.timezone(datetime.timedelta(hours=9))
+    now_kst = datetime.datetime.now(kst)
+    today_str = now_kst.strftime("%Y-%m-%d")
+    now_time = now_kst.strftime("%H:%M")
 
     briefings = []
 
     if api_key and news_items:
         try:
             print("[Info] Calling Gemini AI for news synthesis...")
-            import urllib.request
             prompt = f"""
 다음은 오늘의 최신 경제 뉴스 헤드라인 목록과 주요 시장 지표입니다:
 시장 지표: 나스닥 {market_data['nasdaq']['val']} ({market_data['nasdaq']['change']}), 코스피 {market_data['kospi']['val']}, 환율 {market_data['usdkrw']['val']}, 미 국채 10년 {market_data['us10y']['val']}
@@ -153,7 +151,6 @@ def summarize_with_gemini_or_rule(news_items, market_data):
             with urllib.request.urlopen(req, timeout=20) as res:
                 res_data = json.loads(res.read().decode("utf-8"))
                 text_out = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                # Markdown 코드 블록 제거
                 if text_out.startswith("```json"):
                     text_out = text_out[7:]
                 if text_out.startswith("```"):
@@ -183,9 +180,9 @@ def summarize_with_gemini_or_rule(news_items, market_data):
                 print(f"[Success] Generated {len(briefings)} briefings via Gemini AI.")
                 return briefings
         except Exception as e:
-            print(f"[Warning] Gemini API call failed or parsing error: {e}. Falling back to Rule-based engine.")
+            print(f"[Warning] Gemini API call failed: {e}. Falling back to Rule-based engine.")
 
-    # Rule-based Fallback (API 키가 없거나 에러 시 자동 생성)
+    # Rule-based Fallback
     categories_rule = [
         {"cat": "fed", "name": "미국 연준 / 금리", "kw": ["금리", "연준", "파월", "fomc", "인플레", "cpi", "물가"]},
         {"cat": "fx", "name": "국내 외환 / 환율", "kw": ["환율", "원화", "달러", "외환", "외국인"]},
@@ -248,7 +245,7 @@ def update_database():
 
     print("[4/4] Updating data/daily_briefings.json...")
     existing_data = {
-        "updatedAt": datetime.datetime.now().isoformat(),
+        "updatedAt": "",
         "marketSummary": market_data,
         "briefings": []
     }
@@ -260,8 +257,10 @@ def update_database():
         except Exception as e:
             print(f"[Warning] Could not read existing DB: {e}")
 
-    # 시장 지표 갱신
-    existing_data["updatedAt"] = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+09:00")
+    # 한국 표준시(KST)로 타임스탬프 갱신
+    kst = datetime.timezone(datetime.timedelta(hours=9))
+    now_kst = datetime.datetime.now(kst)
+    existing_data["updatedAt"] = now_kst.strftime("%Y-%m-%dT%H:%M:%S+09:00")
     existing_data["marketSummary"] = market_data
 
     # 기존 브리핑 목록 앞에 새 브리핑 추가 (중복 제목 방지)
