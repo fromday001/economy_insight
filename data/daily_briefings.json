@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T08:37:23+09:00",
+  "updatedAt": "2026-11-19T08:37:22+09:00",
   "marketSummary": {
     "nasdaq": {
       "val": "21,480.20",
@@ -57,6 +57,28 @@
     ]
   },
   "briefings": [
+    {
+      "id": "post-20261119-1",
+      "date": "2026-11-19",
+      "time": "08:37",
+      "category": "fx",
+      "categoryName": "국내 외환 / 환율",
+      "source": "시사저널e",
+      "link": "https://news.google.com/rss/articles/CBMickFVX3lxTFBkMVRfaXBZZmRqZEoyeHpHUzRnVVB0NUstQllWWEFfQlFkYktQeVZ0cG1NbzdfQlpVQ2ZKMkV6ekR0ZGVienZfRHpmY3pMMWkyWEh2OHhnMHhQWGduZENXcGJuSm1CX19vLUJYeGZWQ1h5QQ?oc=5",
+      "title": "[e마켓오프닝] 美 반도체지수 3.4% 급락···코스피 외국인 매매 향방은",
+      "bullets": [
+        "[e마켓오프닝] 美 반도체지수 3.4% 급락···코스피 외국인 매매 향방은 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "환율 상승은 국내 증시의 외국인 수급에는 부담이지만, 달러로 수출 대금을 받는 기업에게는 환차익 기회가 됩니다. 포트폴리오의 통화 분산이 필수적입니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
     {
       "id": "post-20261118-4",
       "date": "2026-11-18",
