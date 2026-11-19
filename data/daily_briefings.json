@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T08:37:22+09:00",
+  "updatedAt": "2026-11-20T08:30:43+09:00",
   "marketSummary": {
     "nasdaq": {
       "val": "21,480.20",
@@ -57,6 +57,50 @@
     ]
   },
   "briefings": [
+    {
+      "id": "post-20261120-1",
+      "date": "2026-11-20",
+      "time": "08:30",
+      "category": "tech",
+      "categoryName": "반도체 & 빅테크",
+      "source": "톱뉴스",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBkeVY4UVh3dFZQMlpXOUxqWTAxREFTNzExMjBzcGFZaUVHd2tjSVdSUUtaOF9xczdpU2wtTGMyQTlhUU0yTEl6RkhEYUlvY2VMWHFsRTQ4VFozX0h6QXI4azlxLTRMQnVCX2drMjJuNA?oc=5",
+      "title": "[오늘 증시 동향] 미국 AI 투자 열기 식으며 나스닥 급락…국내 반도체주 다시 시험대",
+      "bullets": [
+        "[오늘 증시 동향] 미국 AI 투자 열기 식으며 나스닥 급락…국내 반도체주 다시 시험대 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "거시경제 지표와 정책 발표는 기업들의 실적과 자금 조달 비용에 직접적인 영향을 미칩니다. 단기 변동성에 흔들리지 말고 현금 창출력과 해자를 갖춘 기업 중심으로 접근하는 것이 중요합니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
+    {
+      "id": "post-20261120-3",
+      "date": "2026-11-20",
+      "time": "08:30",
+      "category": "tech",
+      "categoryName": "경제 트렌드",
+      "source": "스페셜타임스",
+      "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE83WURrS0tMWlZQZktNZm5KTWpCUldUa2diWEp4THVubi13aW5ZcXNoMVNwalpqdGVnRlNFcVVTb3FlenZnQmhaZU4yMFhWMDhkdHZZUWk4ZnJWU0VjUjBuOWxickk5WDVId1hqUlZiU2xxSG8?oc=5",
+      "title": "앤트로픽 나스닥 상장 앞두고 증시 수급 불안 완화 촉각",
+      "bullets": [
+        "앤트로픽 나스닥 상장 앞두고 증시 수급 불안 완화 촉각 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "거시경제 지표와 정책 발표는 기업들의 실적과 자금 조달 비용에 직접적인 영향을 미칩니다. 단기 변동성에 흔들리지 말고 현금 창출력과 해자를 갖춘 기업 중심으로 접근하는 것이 중요합니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
     {
       "id": "post-20261119-1",
       "date": "2026-11-19",
