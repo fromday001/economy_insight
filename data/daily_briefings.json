@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-25T08:37:38+09:00",
+  "updatedAt": "2026-11-26T08:37:56+09:00",
   "marketSummary": {
     "nasdaq": {
       "val": "21,480.20",
@@ -57,6 +57,94 @@
     ]
   },
   "briefings": [
+    {
+      "id": "post-20261126-1",
+      "date": "2026-11-26",
+      "time": "08:37",
+      "category": "fed",
+      "categoryName": "미국 연준 / 금리",
+      "source": "지이코노미",
+      "link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1ld2dEakM3S2FvWnFqUVU5YjZDcDJOMFF6bEtmWC11dTFwOHJkYmRCTUgwVFc4TkZHYzBaRlZsWXJKQnRjN3Z4OUVTRmhsdXROSXVxVmJfUV9FcEhWaG50VDhPeHU?oc=5",
+      "title": "美 성장률 4.3%에도 기술주 휘청…고물가·관세·AI 거품 우려에 흔들리는 뉴욕증시",
+      "bullets": [
+        "美 성장률 4.3%에도 기술주 휘청…고물가·관세·AI 거품 우려에 흔들리는 뉴욕증시 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "금리 변동기에는 빚이 적고 이자 보상 능력이 우수한 가치주가 상대적으로 안전합니다. 지수 추종 ETF를 분할 매수하는 적립식 투자가 유리합니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
+    {
+      "id": "post-20261126-2",
+      "date": "2026-11-26",
+      "time": "08:37",
+      "category": "fx",
+      "categoryName": "국내 외환 / 환율",
+      "source": "위클리오늘",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBqVXBzQ1BGNVhSUk5BSFVHcExFLTVRNjFDeHNVM3FKT1AxUWplZGRiVkhaUWJwWVdoN18yeXpXODBmR21FcjBYM0N2anVFcHlCcGxnSGhuVmd5VEp3a2JYWWlaa0RaSUUzMlNBWWVVYw?oc=5",
+      "title": "[위클리오늘] 코스피 4800선 출발···환율 1340원대",
+      "bullets": [
+        "[위클리오늘] 코스피 4800선 출발···환율 1340원대 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "환율 상승은 국내 증시의 외국인 수급에는 부담이지만, 달러로 수출 대금을 받는 기업에게는 환차익 기회가 됩니다. 포트폴리오의 통화 분산이 필수적입니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
+    {
+      "id": "post-20261126-3",
+      "date": "2026-11-26",
+      "time": "08:37",
+      "category": "fx",
+      "categoryName": "국내 외환 / 환율",
+      "source": "이슈밸리",
+      "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9oaDRJQ3liQ21wTFUzc0NraWlGaHJ1VXl3X0p5ODNNZzBaNEZXWV9DeUZ2TEpMM3B4dE0yN3lIWE8yRlRlWnRwY3p4RG5hcVRLb3lOSzVpRmVpNTE5eEgwUDlQSU1aalFmdEt6dVZn?oc=5",
+      "title": "엔비디아 반등 하루 만에 제동…한국 증시, 반도체·외국인 수급 시험대",
+      "bullets": [
+        "엔비디아 반등 하루 만에 제동…한국 증시, 반도체·외국인 수급 시험대 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "환율 상승은 국내 증시의 외국인 수급에는 부담이지만, 달러로 수출 대금을 받는 기업에게는 환차익 기회가 됩니다. 포트폴리오의 통화 분산이 필수적입니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
+    {
+      "id": "post-20261126-4",
+      "date": "2026-11-26",
+      "time": "08:37",
+      "category": "tech",
+      "categoryName": "반도체 & 빅테크",
+      "source": "재경일보",
+      "link": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE8tLTVTOUpwVUQxd0djRGVmR2E3aUplZ1FldURkdXBoYzdLOFBSeGRLZnR0TGpCVzltT3F0REJPRERWdjdPakh4Y3hzUQ?oc=5",
+      "title": "AI·반도체가 이끄는 한국 경제…내년 3.2% 성장 : 경제",
+      "bullets": [
+        "AI·반도체가 이끄는 한국 경제…내년 3.2% 성장 : 경제 관련 글로벌 및 국내 시장 반응 집중 분석.",
+        "당일 거시경제 지표(환율 1,394.50원, 나스닥 +1.11%) 변동성 반영.",
+        "향후 기업 실적과 중앙은행 통화정책 경로에 미칠 파급 효과 주시."
+      ],
+      "takeaway": "거시경제 지표와 정책 발표는 기업들의 실적과 자금 조달 비용에 직접적인 영향을 미칩니다. 단기 변동성에 흔들리지 말고 현금 창출력과 해자를 갖춘 기업 중심으로 접근하는 것이 중요합니다.",
+      "marketSnapshot": {
+        "nasdaq": "+1.11%",
+        "kospi": "-0.47%",
+        "fx": "1,394.50원",
+        "us10y": "4.38%"
+      }
+    },
     {
       "id": "post-20261125-2",
       "date": "2026-11-25",
